@@ -1,5 +1,5 @@
 // -*- C++ -*-
-/* $Id: globals.h,v 1.55 2003/05/22 08:23:18 t1mpy Exp $
+/* $Id: globals.h,v 1.56 2004/01/16 08:44:52 shadrack Exp $
 
  * id3lib: a C++ library for creating and manipulating id3v1/v2 tags
  * Copyright 1999, 2000 Scott Thomas Haug
@@ -698,7 +698,7 @@ ID3_ENUM(Mp3_Frequencies)
   MP3FREQUENCIES_24000HZ = 24000,
   MP3FREQUENCIES_32000HZ = 32000,
   MP3FREQUENCIES_48000HZ = 48000,
-  MP3FREQUENCIES_44100HZ = 44100,
+  MP3FREQUENCIES_44100HZ = 44100
 };
 
 ID3_ENUM(Mp3_ChannelMode)
