@@ -1,4 +1,4 @@
-// $Id: misc_support.cpp,v 1.41 2002/09/19 10:32:15 t1mpy Exp $
+// $Id: misc_support.cpp,v 1.42 2003/01/04 17:10:50 cmumford Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -1005,7 +1005,7 @@ ID3_Frame* ID3_AddGenre(ID3_Tag* tag, size_t genreNum, char* genre, bool add_v1_
   if (add_v1_genre_number == false && add_v1_genre_description == false)
   { // you don't want me to do anything? Fine by me
     delete newgenre;
-    delete [1024] tmpgenre1;
+    delete [] tmpgenre1;
     return NULL;
   }
   if (genre != NULL && strlen(genre) == 0)
