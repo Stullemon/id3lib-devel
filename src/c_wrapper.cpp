@@ -1,4 +1,4 @@
-// $Id: c_wrapper.cpp,v 1.24 2004/01/16 01:53:55 shadrack Exp $
+// $Id: c_wrapper.cpp,v 1.25 2004/01/21 04:59:53 shadrack Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -679,14 +679,14 @@ extern "C"
       return myFrameInfo.Description(frameid);
   }
 
-  ID3_C_EXPORT uint32 CCONV
+  ID3_C_EXPORT int CCONV
   ID3FrameInfo_MaxFrameID()
   {
       ID3_FrameInfo myFrameInfo;
       return myFrameInfo.MaxFrameID();
   }
 
-  ID3_C_EXPORT uint32 CCONV
+  ID3_C_EXPORT int CCONV
   ID3FrameInfo_NumFields(ID3_FrameID frameid)
   {
       ID3_FrameInfo myFrameInfo;
@@ -694,28 +694,28 @@ extern "C"
   }
 
   ID3_C_EXPORT ID3_FieldID CCONV
-  ID3FrameInfo_FieldID(ID3_FrameID frameid, uint32 fieldnum)
+  ID3FrameInfo_FieldID(ID3_FrameID frameid, int fieldnum)
   {
       ID3_FrameInfo myFrameInfo;
       return myFrameInfo.FieldID(frameid,fieldnum);
   }
 
   ID3_C_EXPORT ID3_FieldType CCONV
-  ID3FrameInfo_FieldType(ID3_FrameID frameid, uint32 fieldnum)
+  ID3FrameInfo_FieldType(ID3_FrameID frameid, int fieldnum)
   {
       ID3_FrameInfo myFrameInfo;
       return myFrameInfo.FieldType(frameid,fieldnum);
   }
 
   ID3_C_EXPORT size_t CCONV
-  ID3FrameInfo_FieldSize(ID3_FrameID frameid, uint32 fieldnum)
+  ID3FrameInfo_FieldSize(ID3_FrameID frameid, int fieldnum)
   {
       ID3_FrameInfo myFrameInfo;
       return myFrameInfo.FieldSize(frameid,fieldnum);
   }
 
   ID3_C_EXPORT flags_t CCONV
-  ID3FrameInfo_FieldFlags(ID3_FrameID frameid, uint32 fieldnum)
+  ID3FrameInfo_FieldFlags(ID3_FrameID frameid, int fieldnum)
   {
       ID3_FrameInfo myFrameInfo;
       return myFrameInfo.FieldFlags(frameid,fieldnum);

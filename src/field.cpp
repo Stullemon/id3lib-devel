@@ -1,4 +1,4 @@
-// $Id: field.cpp,v 1.49 2004/01/16 01:53:55 shadrack Exp $
+// $Id: field.cpp,v 1.50 2004/01/21 04:59:53 shadrack Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -1470,7 +1470,7 @@ static  ID3_FrameDef ID3_FrameDefs[] =
  ** if you only plan to generate 3.0 tags.
  **
  ** @author Dirk Mahoney
- ** @version $Id: field.cpp,v 1.49 2004/01/16 01:53:55 shadrack Exp $
+ ** @version $Id: field.cpp,v 1.50 2004/01/21 04:59:53 shadrack Exp $
  ** \sa ID3_Tag
  ** \sa ID3_Frame
  ** \sa ID3_Err
@@ -1816,7 +1816,7 @@ bool ID3_FieldImpl::SetEncoding(ID3_TextEnc enc)
  **
  ** void ShowKnownFrameInfo {
  **   ID3_FrameInfo myFrameInfo;
- **   for (uint32 cur = ID3FID_NOFRAME+1; cur <= myFrameInfo.MaxFrameID(); cur ++)
+ **   for (int cur = ID3FID_NOFRAME+1; cur <= myFrameInfo.MaxFrameID(); cur ++)
  **   {
  **     cout << "Short ID: " << myFrameInfo.ShortName(ID3_FrameID(cur)) <<
  **     " Long ID: " << myFrameInfo.LongName(ID3_FrameID(cur)) <<
@@ -1833,13 +1833,13 @@ bool ID3_FieldImpl::SetEncoding(ID3_TextEnc enc)
  ** does it take on any meaningful significance.
  **
  ** \code
- **  for (uint32 cur = ID3FID_NOFRAME+1; cur <= fi.MaxFrameID(); cur ++)
+ **  for (int cur = ID3FID_NOFRAME+1; cur <= fi.MaxFrameID(); cur ++)
  **  {
- **    uint32 numfields = fi.NumFields(ID3_FrameID(cur));
+ **    int numfields = fi.NumFields(ID3_FrameID(cur));
  **
  **    cout << "ID: " << fi.LongName(ID3_FrameID(cur)) <<
  **    " FIELDS: " << numfields << endl;
- **    for(uint32 i=0;i<numfields;i++) {
+ **    for(int i=0;i<numfields;i++) {
  **      cout << "TYPE: " << fi.FieldType(ID3_FrameID(cur),i) <<
  **      " SIZE: " << fi.FieldSize(ID3_FrameID(cur),i) <<
  **      " FLAGS: " << fi.FieldFlags(ID3_FrameID(cur),i) << endl;
@@ -1852,9 +1852,14 @@ bool ID3_FieldImpl::SetEncoding(ID3_TextEnc enc)
  ** \endcode
  **
  ** @author Cedric Tefft
- ** @version $Id: field.cpp,v 1.49 2004/01/16 01:53:55 shadrack Exp $
+ ** @version $Id: field.cpp,v 1.50 2004/01/21 04:59:53 shadrack Exp $
  **/
 
+/* FIXME: All the fieldnum arguments should be unsigned types (maybe uint32)
+   to be consistent with the rest of the library, but changing them will
+   alter the API which will break any applications that use the FrameInfo
+   class.  This change will have to wait until the next major release (4.0)?
+*/
 
 char *ID3_FrameInfo::ShortName(ID3_FrameID frameid)
 {
@@ -1880,14 +1885,14 @@ const char *ID3_FrameInfo::Description(ID3_FrameID frameid)
     return NULL;
 }
 
-uint32 ID3_FrameInfo::MaxFrameID()
+int ID3_FrameInfo::MaxFrameID()
 {
   return ID3FID_LASTFRAMEID-1;
 }
 
-uint32 ID3_FrameInfo::NumFields(ID3_FrameID frameid)
+int ID3_FrameInfo::NumFields(ID3_FrameID frameid)
 {
-  uint32 fieldnum=0;
+  int fieldnum=0;
 
   if(frameid > ID3FID_NOFRAME && frameid < ID3FID_LASTFRAMEID)
 	while (ID3_FrameDefs[frameid-1].aeFieldDefs[fieldnum]._id != ID3FN_NOFIELD)
@@ -1898,7 +1903,7 @@ uint32 ID3_FrameInfo::NumFields(ID3_FrameID frameid)
   return fieldnum;
 }
 
-ID3_FieldID ID3_FrameInfo::FieldID(ID3_FrameID frameid, uint32 fieldnum)
+ID3_FieldID ID3_FrameInfo::FieldID(ID3_FrameID frameid, int fieldnum)
 {
   if(frameid > ID3FID_NOFRAME && frameid < ID3FID_LASTFRAMEID &&
      fieldnum < NumFields(frameid))
@@ -1907,7 +1912,7 @@ ID3_FieldID ID3_FrameInfo::FieldID(ID3_FrameID frameid, uint32 fieldnum)
   return ID3FN_NOFIELD;
 }
 
-ID3_FieldType ID3_FrameInfo::FieldType(ID3_FrameID frameid, uint32 fieldnum)
+ID3_FieldType ID3_FrameInfo::FieldType(ID3_FrameID frameid, int fieldnum)
 {
   if(frameid > ID3FID_NOFRAME && frameid < ID3FID_LASTFRAMEID &&
      fieldnum < NumFields(frameid))
@@ -1916,7 +1921,7 @@ ID3_FieldType ID3_FrameInfo::FieldType(ID3_FrameID frameid, uint32 fieldnum)
   return ID3FTY_NONE;
 }
 
-size_t ID3_FrameInfo::FieldSize(ID3_FrameID frameid, uint32 fieldnum)
+size_t ID3_FrameInfo::FieldSize(ID3_FrameID frameid, int fieldnum)
 {
   if(frameid > ID3FID_NOFRAME && frameid < ID3FID_LASTFRAMEID &&
      fieldnum < NumFields(frameid))
@@ -1925,7 +1930,7 @@ size_t ID3_FrameInfo::FieldSize(ID3_FrameID frameid, uint32 fieldnum)
   return 0;
 }
 
-flags_t ID3_FrameInfo::FieldFlags(ID3_FrameID frameid, uint32 fieldnum)
+flags_t ID3_FrameInfo::FieldFlags(ID3_FrameID frameid, int fieldnum)
 {
   if(frameid > ID3FID_NOFRAME && frameid < ID3FID_LASTFRAMEID &&
      fieldnum < NumFields(frameid))
