@@ -1,7 +1,8 @@
-// $Id: tag_find.cpp,v 1.27 2002/07/02 22:14:42 t1mpy Exp $
+// $Id: tag_find.cpp,v 1.28 2002/09/13 15:38:08 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
+// Copyright 2002 Thijmen Klok (thijmen@id3lib.org)
 
 // This library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU Library General Public License as published by
@@ -31,7 +32,7 @@ using namespace dami;
 ID3_TagImpl::const_iterator ID3_TagImpl::Find(const ID3_Frame *frame) const
 {
   const_iterator cur = _frames.begin();
-  
+
   for (; cur != _frames.end(); ++cur)
   {
     if (*cur == frame)
@@ -39,14 +40,14 @@ ID3_TagImpl::const_iterator ID3_TagImpl::Find(const ID3_Frame *frame) const
       break;
     }
   }
-  
+
   return cur;
 }
 
 ID3_TagImpl::iterator ID3_TagImpl::Find(const ID3_Frame *frame)
 {
   iterator cur = _frames.begin();
-  
+
   for (; cur != _frames.end(); ++cur)
   {
     if (*cur == frame)
@@ -54,14 +55,14 @@ ID3_TagImpl::iterator ID3_TagImpl::Find(const ID3_Frame *frame)
       break;
     }
   }
-  
+
   return cur;
 }
 
 ID3_Frame *ID3_TagImpl::Find(ID3_FrameID id) const
 {
   ID3_Frame *frame = NULL;
-  
+
   // reset the cursor if it isn't set
   if (_frames.end() == _cursor)
   {
@@ -78,7 +79,7 @@ ID3_Frame *ID3_TagImpl::Find(ID3_FrameID id) const
     // list and, if unsuccessful, start from the beginning of the list and
     // search to the cursor.
     const_iterator
-      begin  = (0 == iCount ? _cursor       : _frames.begin()), 
+      begin  = (0 == iCount ? _cursor       : _frames.begin()),
       end    = (0 == iCount ? _frames.end() : _cursor);
     // search from the cursor to the end
     for (const_iterator cur = begin; cur != end; ++cur)
@@ -92,7 +93,7 @@ ID3_Frame *ID3_TagImpl::Find(ID3_FrameID id) const
       }
     }
   }
-  
+
   return frame;
 }
 
@@ -100,7 +101,7 @@ ID3_Frame *ID3_TagImpl::Find(ID3_FrameID id, ID3_FieldID fldID, String data) con
 {
   ID3_Frame *frame = NULL;
   ID3D_NOTICE( "Find: looking for comment with data = " << data.c_str() );
-  
+
   // reset the cursor if it isn't set
   if (_frames.end() == _cursor)
   {
@@ -118,7 +119,7 @@ ID3_Frame *ID3_TagImpl::Find(ID3_FrameID id, ID3_FieldID fldID, String data) con
     // list and, if unsuccessful, start from the beginning of the list and
     // search to the cursor.
     const_iterator
-      begin  = (0 == iCount ? _cursor       : _frames.begin()), 
+      begin  = (0 == iCount ? _cursor       : _frames.begin()),
       end    = (0 == iCount ? _frames.end() : _cursor);
     // search from the cursor to the end
     for (const_iterator cur = begin; cur != end; ++cur)
@@ -147,14 +148,14 @@ ID3_Frame *ID3_TagImpl::Find(ID3_FrameID id, ID3_FieldID fldID, String data) con
       }
     }
   }
-  
+
   return frame;
 }
 
 ID3_Frame *ID3_TagImpl::Find(ID3_FrameID id, ID3_FieldID fldID, WString data) const
 {
   ID3_Frame *frame = NULL;
-  
+
   // reset the cursor if it isn't set
   if (_frames.end() == _cursor)
   {
@@ -170,7 +171,7 @@ ID3_Frame *ID3_TagImpl::Find(ID3_FrameID id, ID3_FieldID fldID, WString data) co
     // list and, if unsuccessful, start from the beginning of the list and
     // search to the cursor.
     const_iterator
-      begin  = (0 == iCount ? _cursor       : _frames.begin()), 
+      begin  = (0 == iCount ? _cursor       : _frames.begin()),
       end    = (0 == iCount ? _frames.end() : _cursor);
     // search from the cursor to the end
     for (const_iterator cur = begin; cur != end; ++cur)
@@ -195,14 +196,14 @@ ID3_Frame *ID3_TagImpl::Find(ID3_FrameID id, ID3_FieldID fldID, WString data) co
       }
     }
   }
-  
+
   return frame;
 }
 
 ID3_Frame *ID3_TagImpl::Find(ID3_FrameID id, ID3_FieldID fldID, uint32 data) const
 {
   ID3_Frame *frame = NULL;
-  
+
   // reset the cursor if it isn't set
   if (_frames.end() == _cursor)
   {
@@ -218,7 +219,7 @@ ID3_Frame *ID3_TagImpl::Find(ID3_FrameID id, ID3_FieldID fldID, uint32 data) con
     // list and, if unsuccessful, start from the beginning of the list and
     // search to the cursor.
     const_iterator
-      begin  = (0 == iCount ? _cursor       : _frames.begin()), 
+      begin  = (0 == iCount ? _cursor       : _frames.begin()),
       end    = (0 == iCount ? _frames.end() : _cursor);
     // search from the cursor to the end
     for (const_iterator cur = begin; cur != end; ++cur)
@@ -233,7 +234,7 @@ ID3_Frame *ID3_TagImpl::Find(ID3_FrameID id, ID3_FieldID fldID, uint32 data) con
       }
     }
   }
-  
+
   return frame;
 }
 
