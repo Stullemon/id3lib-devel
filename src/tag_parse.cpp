@@ -1,4 +1,4 @@
-// $Id: tag_parse.cpp,v 1.46 2002/09/13 15:40:29 t1mpy Exp $
+// $Id: tag_parse.cpp,v 1.47 2002/11/24 16:33:37 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -411,7 +411,7 @@ void ID3_TagImpl::ParseReader(ID3_Reader &reader)
   wr.setBeg(wr.getCur());
 
   _file_tags.clear();
-  _file_size = reader.getEnd() + 1;
+  _file_size = reader.getEnd();
 
   ID3_Reader::pos_type beg  = wr.getBeg();
   ID3_Reader::pos_type cur  = wr.getCur();
@@ -572,3 +572,4 @@ void ID3_TagImpl::ParseReader(ID3_Reader &reader)
   else
     this->SetPadding(false); //no need to pad an empty file
 }
+
