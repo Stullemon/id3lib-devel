@@ -1,7 +1,8 @@
 Compiling on win32:
 
-So far, it has only been confirmed it compiles on visual C 6.0 (service pack 5), 
-but if you got it working on Borland or other compilers, drop me a mail, or better, add a patch
+So far, it has only been confirmed it compiles on visual C 6.0 (service pack 5),
+and Borland Cbuilder 6.
+but if you got it working on Borland 5 or other compilers, drop me a mail, or better, add a patch
 here: http://sourceforge.net/tracker/?group_id=979&atid=300979 with the (e.g.) borland project files.
 
 These are the directories you'll be needing:
