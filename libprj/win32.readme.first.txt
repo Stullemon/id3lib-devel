@@ -21,6 +21,8 @@ it doesn't seem to be maintained anymore. I've included it as a service.
 The original location is http://sourceforge.net/projects/id3com
 
 And, last but not least, there is a delphi project in id3lib/delphi which uses the allready compiled dll.
+Also in there is a file called Id3lib.pas which has the interface to the dll
+defined.
 
 How to start:
 
