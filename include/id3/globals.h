@@ -1,5 +1,5 @@
 // -*- C++ -*-
-/* $Id: globals.h,v 1.52 2002/08/10 17:40:00 t1mpy Exp $
+/* $Id: globals.h,v 1.53 2002/09/13 14:24:23 t1mpy Exp $
 
  * id3lib: a C++ library for creating and manipulating id3v1/v2 tags
  * Copyright 1999, 2000 Scott Thomas Haug
@@ -9,12 +9,12 @@
  * under the terms of the GNU Library General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
  * License for more details.
- * 
+ *
  * You should have received a copy of the GNU Library General Public License
  * along with this library; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
@@ -24,7 +24,7 @@
  * send such submissions.  See the AUTHORS file for a list of people who have
  * contributed to id3lib.  See the ChangeLog file for a list of changes to
  * id3lib.  These files are distributed with id3lib at
- * http://download.sourceforge.net/id3lib/ 
+ * http://download.sourceforge.net/id3lib/
  */
 
 /** This file defines common macros, types, constants, and enums used
@@ -33,6 +33,16 @@
 
 #ifndef _ID3LIB_GLOBALS_H_
 #define _ID3LIB_GLOBALS_H_
+
+#if defined(__BORLANDC__)
+// due to a bug in borland it sometimes still wants mfc compatibility even when you disable it
+#  if defined(_MSC_VER)
+#    undef _MSC_VER
+#  endif
+#  if defined(__MFC_COMPAT__)
+#    undef __MFC_COMPAT__
+#  endif
+#endif
 
 #include <stdlib.h>
 #include "id3/sized_types.h"
@@ -57,7 +67,11 @@
 #  else
 #    if (ID3LIB_LINKOPTION == LINKOPTION_CREATE_DYNAMIC) 
        //used for creating a dynamic dll
-#      define ID3_C_EXPORT extern _declspec(dllexport)
+#      if defined(__BORLANDC__)
+#        define ID3_C_EXPORT extern __declspec(dllexport)
+#      else
+#        define ID3_C_EXPORT extern _declspec(dllexport)
+#      endif
 #      define ID3_CPP_EXPORT __declspec(dllexport)
 #      define CCONV __stdcall // Added for VB & Delphi Compatibility - By FrogPrince Advised By Lothar
 #    endif
@@ -69,15 +83,29 @@
 #    endif
 #    if (ID3LIB_LINKOPTION == LINKOPTION_USE_DYNAMIC) 
        //used for those that do not link static and are using the dynamic dll by including a id3lib header
-#      define ID3_C_EXPORT extern _declspec(dllimport)
+#      if defined(__BORLANDC__)
+#        define ID3_C_EXPORT extern __declspec(dllimport)
+#      else
+#        define ID3_C_EXPORT extern _declspec(dllimport)
+#      endif
 #      define ID3_CPP_EXPORT __declspec(dllimport) //functions like these shouldn't be used by vb and delphi, 
 #      define CCONV __stdcall // Added for VB & Delphi Compatibility - By FrogPrince Advised By Lothar
 #    endif
+#  endif
+#  if (defined(_DEBUG) && defined(_MSC_VER) && _MSC_VER > 1000 && ID3LIB_LINKOPTION == LINKOPTION_CREATE_DYNAMIC)
+    //used for detecting memory leaks
+#    define _CRTDBG_MAP_ALLOC
+#    include <stdlib.h>
+#    include <crtdbg.h>
+#    define LEAKTESTNEW(type) new(_NORMAL_BLOCK, __FILE__, __LINE__) type
+#  else
+#    define LEAKTESTNEW(type) new type
 #  endif
 #else /* !WIN32 */
 #  define ID3_C_EXPORT
 #  define ID3_CPP_EXPORT
 #  define CCONV
+#  define LEAKTESTNEW(type) new type
 #endif /* !WIN32 */
 
 #define ID3_C_VAR extern
@@ -166,7 +194,7 @@ ID3_ENUM(ID3_V2Spec)
   ID3V2_3_0,
   ID3V2_4_0,
   ID3V2_EARLIEST = ID3V2_2_0,
-  ID3V2_LATEST = ID3V2_3_0  
+  ID3V2_LATEST = ID3V2_4_0
 };
 
 /** The various types of tags that id3lib can handle
@@ -196,31 +224,51 @@ ID3_ENUM(ID3_TagType)
  **/
 ID3_ENUM(ID3_FieldID)
 {
-  ID3FN_NOFIELD = 0,    /**< No field */
-  ID3FN_TEXTENC,        /**< Text encoding (unicode or ASCII) */
-  ID3FN_TEXT,           /**< Text field */
-  ID3FN_URL,            /**< A URL */
-  ID3FN_DATA,           /**< Data field */
-  ID3FN_DESCRIPTION,    /**< Description field */
-  ID3FN_OWNER,          /**< Owner field */
-  ID3FN_EMAIL,          /**< Email field */
-  ID3FN_RATING,         /**< Rating field */
-  ID3FN_FILENAME,       /**< Filename field */
-  ID3FN_LANGUAGE,       /**< Language field */
-  ID3FN_PICTURETYPE,    /**< Picture type field */
-  ID3FN_IMAGEFORMAT,    /**< Image format field */
-  ID3FN_MIMETYPE,       /**< Mimetype field */
-  ID3FN_COUNTER,        /**< Counter field */
-  ID3FN_ID,             /**< Identifier/Symbol field */
-  ID3FN_VOLUMEADJ,      /**< Volume adjustment field */
-  ID3FN_NUMBITS,        /**< Number of bits field */
-  ID3FN_VOLCHGRIGHT,    /**< Volume chage on the right channel */
-  ID3FN_VOLCHGLEFT,     /**< Volume chage on the left channel */
-  ID3FN_PEAKVOLRIGHT,   /**< Peak volume on the right channel */
-  ID3FN_PEAKVOLLEFT,    /**< Peak volume on the left channel */
-  ID3FN_TIMESTAMPFORMAT,/**< SYLT Timestamp Format */
-  ID3FN_CONTENTTYPE,    /**< SYLT content type */
-  ID3FN_LASTFIELDID     /**< Last field placeholder */
+  ID3FN_NOFIELD = 0,       /**< No field */
+  ID3FN_TEXTENC,           /**< Text encoding (unicode or ASCII) */
+  ID3FN_TEXT,              /**< Text field */
+  ID3FN_URL,               /**< A URL */
+  ID3FN_DATA,              /**< Data field */
+  ID3FN_DESCRIPTION,       /**< Description field */
+  ID3FN_OWNER,             /**< Owner field */
+  ID3FN_EMAIL,             /**< Email field */
+  ID3FN_RATING,            /**< Rating field */
+  ID3FN_FILENAME,          /**< Filename field */
+  ID3FN_LANGUAGE,          /**< Language field */
+  ID3FN_PICTURETYPE,       /**< Picture type field */
+  ID3FN_IMAGEFORMAT,       /**< Image format field */
+  ID3FN_MIMETYPE,          /**< Mimetype field */
+  ID3FN_COUNTER,           /**< Counter field */
+  ID3FN_ID,                /**< Identifier/Symbol field */
+  ID3FN_VOLUMEADJ,         /**< Volume adjustment field */
+  ID3FN_NUMBITS,           /**< Number of bits field */
+  ID3FN_NUMBER,            /**< General Number, can be anything, as long it's an integer <= 32 bits  */
+  ID3FN_VOLCHGRIGHT,       /**< Volume chage on the right channel */
+  ID3FN_VOLCHGLEFT,        /**< Volume chage on the left channel */
+  ID3FN_PEAKVOLRIGHT,      /**< Peak volume on the right channel */
+  ID3FN_PEAKVOLLEFT,       /**< Peak volume on the left channel */
+  ID3FN_TIMESTAMPFORMAT,   /**< SYLT Timestamp Format */
+  ID3FN_CONTENTTYPE,       /**< SYLT content type */
+  ID3FN_REVERBL,           /**< Reverb Left */
+  ID3FN_REVERBR,           /**< Reverb Right */
+  ID3FN_REVERBBOUNCESL,    /**< Reverb Bounces Left */
+  ID3FN_REVERBBOUNCESR,    /**< Reverb Bounces Right */
+  ID3FN_REVERBFEEDBACKL2L, /**< Reverb Feedback Left to Left */
+  ID3FN_REVERBFEEDBACKL2R, /**< Reverb Feedback Left to Right */
+  ID3FN_REVERBFEEDBACKR2R, /**< Reverb Feedback Right to Right */
+  ID3FN_REVERBFEEDBACKR2L, /**< Reverb Feedback Right to Left */
+  ID3FN_PREMIXL2R,         /**< Premix Left to Right */
+  ID3FN_PREMIXR2L,         /**< Premix Right to Left */
+  ID3FN_LENGTH,            /**< Size field, can be bits, bytes, time etc */
+  ID3FN_FLAGS,             /**< Flags field */
+  ID3FN_OFFSET,            /**< Offset, can be bits, bytes, time etc */
+  ID3FN_PRICE,             /**< Price Field, containing currency+amount */
+  ID3FN_8DATE,             /**< Date Field, containing date as YYYYMMDD */
+  ID3FN_SELLER,            /**< Seller */
+  ID3FN_DELIVERY,          /**< Way of delivery field */
+  ID3FN_BITSSIZE,          /**< contains the number of bits for other fields' fixed size */
+  ID3FN_BYTESSIZE,         /**< contains the number of bytes for other fields' fixed size */
+  ID3FN_LASTFIELDID        /**< Last field placeholder */
 };
 
 /**
@@ -340,11 +388,18 @@ ID3_ENUM(ID3_V1Lengths)
 
 ID3_ENUM(ID3_FieldFlags)
 {
-  ID3FF_NONE       =      0,
-  ID3FF_CSTR       = 1 << 0,
-  ID3FF_LIST       = 1 << 1,
-  ID3FF_ENCODABLE  = 1 << 2,
-  ID3FF_TEXTLIST   = ID3FF_CSTR | ID3FF_LIST | ID3FF_ENCODABLE
+  ID3FF_NONE          =      0,
+  ID3FF_CSTR          = 1 << 0,  /*null (according to encoding) terminated*/
+  ID3FF_LIST          = 1 << 1,  /*null (according to encoding) seperates listitems*/
+  ID3FF_ENCODABLE     = 1 << 2,  /*possible to encode in valid encodings, 
+                                  *if not set then string is encoded by ID3TE_ISO8859_1 */
+  ID3FF_HASLINKEDSIZE = 1 << 3   /*used together with _linked_field. 
+                                  *if _linked_field is NOT set, than this field contains
+                                  *a size for other fields to use, if _linked_field is set,
+                                  *than it's size comes from the last field which had this 
+                                  *flag but didn't have _linked_field set*/
+// the following was utter nonsense. A list doesn't have a ID3FF_CSTR, use "ID3FF_LIST | ID3FF_ENCODABLE" instead
+//  ID3FF_TEXTLIST   = ID3FF_CSTR | ID3FF_LIST | ID3FF_ENCODABLE
 };
 
 /** Enumeration of the types of field types */
@@ -362,20 +417,26 @@ ID3_ENUM(ID3_FieldType)
  **/
 ID3_ENUM(ID3_Err)
 {
+// what is not currently used is commented
   ID3E_NoError = 0,             /**< No error reported */
-  ID3E_NoMemory,                /**< No available memory */
-  ID3E_NoData,                  /**< No data to parse */
-  ID3E_BadData,                 /**< Improperly formatted data */
-  ID3E_NoBuffer,                /**< No buffer to write to */
-  ID3E_SmallBuffer,             /**< Buffer is too small */
+  ID3E_NoData,                  /**< No data to parse or render*/
   ID3E_InvalidFrameID,          /**< Invalid frame id */
-  ID3E_FieldNotFound,           /**< Requested field not found */
+  ID3E_InvalidFrameSize,        /**< Invalid frame size */
   ID3E_UnknownFieldType,        /**< Unknown field type */
-  ID3E_TagAlreadyAttached,      /**< Tag is already attached to a file */
-  ID3E_InvalidTagVersion,       /**< Invalid tag version */
   ID3E_NoFile,                  /**< No file to parse */
   ID3E_ReadOnly,                /**< Attempting to write to a read-only file */
+  ID3E_InvalidTag,              /**< Invalid Tag */
+//  ID3E_NoMemory,                /**< No available memory */
+//  ID3E_BadData,                 /**< Improperly formatted data */
+//  ID3E_NoBuffer,                /**< No buffer to write to */
+//  ID3E_SmallBuffer,             /**< Buffer is too small */
+//  ID3E_FieldNotFound,           /**< Requested field not found */
+//  ID3E_TagAlreadyAttached,      /**< Tag is already attached to a file */
+//  ID3E_InvalidTagVersion,       /**< Invalid tag version */
   ID3E_zlibError                /**< Error in compression/uncompression */
+// We use these errors in a hack in RenderV2ToFile; for this, it is important to keep
+// the errors which can be returned from createFile(), openWritableFile and ID3E_NoFile and ID3E_ReadOnly
+// below the minimum tag size ( which is 10 bytes for the header, + 7 bytes for a minimal (2.2) frame
 };
 
 ID3_ENUM(ID3_ContentType)
@@ -392,7 +453,7 @@ ID3_ENUM(ID3_ContentType)
 ID3_ENUM(ID3_PictureType)
 {
   ID3PT_OTHER = 0,
-  ID3PT_PNG32ICON = 1,     //  32x32 pixels 'file icon' (PNG only)
+  ID3PT_PNG32ICON = 1,     // 32x32 pixels 'file icon' (PNG only)
   ID3PT_OTHERICON = 2,     // Other file icon
   ID3PT_COVERFRONT = 3,    // Cover (front)
   ID3PT_COVERBACK = 4,     // Cover (back)
@@ -419,6 +480,163 @@ ID3_ENUM(ID3_TimeStampFormat)
   ID3TSF_FRAME  = 1,
   ID3TSF_MS
 };
+
+#define ID3_NR_OF_V1_GENRES 148
+
+static char* ID3_v1_genre_description[ID3_NR_OF_V1_GENRES] =
+{
+  "Blues",             //0
+  "Classic Rock",      //1
+  "Country",           //2
+  "Dance",             //3
+  "Disco",             //4
+  "Funk",              //5
+  "Grunge",            //6
+  "Hip-Hop",           //7
+  "Jazz",              //8
+  "Metal",             //9
+  "New Age",           //10
+  "Oldies",            //11
+  "Other",             //12
+  "Pop",               //13
+  "R&B",               //14
+  "Rap",               //15
+  "Reggae",            //16
+  "Rock",              //17
+  "Techno",            //18
+  "Industrial",        //19
+  "Alternative",       //20
+  "Ska",               //21
+  "Death Metal",       //22
+  "Pranks",            //23
+  "Soundtrack",        //24
+  "Euro-Techno",       //25
+  "Ambient",           //26
+  "Trip-Hop",          //27
+  "Vocal",             //28
+  "Jazz+Funk",         //29
+  "Fusion",            //30
+  "Trance",            //31
+  "Classical",         //32
+  "Instrumental",      //33
+  "Acid",              //34
+  "House",             //35
+  "Game",              //36
+  "Sound Clip",        //37
+  "Gospel",            //38
+  "Noise",             //39
+  "AlternRock",        //40
+  "Bass",              //41
+  "Soul",              //42
+  "Punk",              //43
+  "Space",             //44
+  "Meditative",        //45
+  "Instrumental Pop",  //46
+  "Instrumental Rock", //47
+  "Ethnic",            //48
+  "Gothic",            //49
+  "Darkwave",          //50
+  "Techno-Industrial", //51
+  "Electronic",        //52
+  "Pop-Folk",          //53
+  "Eurodance",         //54
+  "Dream",             //55
+  "Southern Rock",     //56
+  "Comedy",            //57
+  "Cult",              //58
+  "Gangsta",           //59
+  "Top 40",            //60
+  "Christian Rap",     //61
+  "Pop/Funk",          //62
+  "Jungle",            //63
+  "Native American",   //64
+  "Cabaret",           //65
+  "New Wave",          //66
+  "Psychadelic",       //67
+  "Rave",              //68
+  "Showtunes",         //69
+  "Trailer",           //70
+  "Lo-Fi",             //71
+  "Tribal",            //72
+  "Acid Punk",         //73
+  "Acid Jazz",         //74
+  "Polka",             //75
+  "Retro",             //76
+  "Musical",           //77
+  "Rock & Roll",       //78
+  "Hard Rock",         //79
+// following are winamp extentions
+  "Folk",                  //80
+  "Folk-Rock",             //81
+  "National Folk",         //82
+  "Swing",                 //83
+  "Fast Fusion",           //84
+  "Bebob",                 //85
+  "Latin",                 //86
+  "Revival",               //87
+  "Celtic",                //88
+  "Bluegrass",             //89
+  "Avantgarde",            //90
+  "Gothic Rock",           //91
+  "Progressive Rock",      //92
+  "Psychedelic Rock",      //93
+  "Symphonic Rock",        //94
+  "Slow Rock",             //95
+  "Big Band",              //96
+  "Chorus",                //97
+  "Easy Listening",        //98
+  "Acoustic",              //99
+  "Humour",                //100
+  "Speech",                //101
+  "Chanson",               //102
+  "Opera",                 //103
+  "Chamber Music",         //104
+  "Sonata",                //105
+  "Symphony",              //106
+  "Booty Bass",            //107
+  "Primus",                //108
+  "Porn Groove",           //109
+  "Satire",                //110
+  "Slow Jam",              //111
+  "Club",                  //112
+  "Tango",                 //113
+  "Samba",                 //114
+  "Folklore",              //115
+  "Ballad",                //116
+  "Power Ballad",          //117
+  "Rhythmic Soul",         //118
+  "Freestyle",             //119
+  "Duet",                  //120
+  "Punk Rock",             //121
+  "Drum Solo",             //122
+  "A capella",             //123
+  "Euro-House",            //124
+  "Dance Hall",            //125
+  "Goa",                   //126
+  "Drum & Bass",           //127
+  "Club-House",            //128
+  "Hardcore",              //129
+  "Terror",                //130
+  "Indie",                 //131
+  "Britpop",               //132
+  "Negerpunk",             //133
+  "Polsk Punk",            //134
+  "Beat",                  //135
+  "Christian Gangsta Rap", //136
+  "Heavy Metal",           //137
+  "Black Metal",           //138
+  "Crossover",             //139
+  "Contemporary Christian",//140
+  "Christian Rock ",       //141
+  "Merengue",              //142
+  "Salsa",                 //143
+  "Trash Metal",           //144
+  "Anime",                 //145
+  "JPop",                  //146
+  "Synthpop"               //147
+};
+
+#define ID3_V1GENRE2DESCRIPTION(x) (x < ID3_NR_OF_V1_GENRES && x >= 0) ? ID3_v1_genre_description[x] : NULL
 
 ID3_ENUM(MP3_BitRates)
 {
@@ -531,6 +749,7 @@ ID3_STRUCT(Mp3_Headerinfo)
   uint32 framesize;
   uint32 frames;                // nr of frames
   uint32 time;                  // nr of seconds in song
+  uint32 datasize;              // size from first sync byte till before the appended tags
   bool privatebit;
   bool copyrighted;
   bool original;
