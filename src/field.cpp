@@ -1,4 +1,4 @@
-// $Id: field.cpp,v 1.46 2002/07/31 13:45:18 t1mpy Exp $
+// $Id: field.cpp,v 1.47 2002/09/13 15:37:35 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -52,8 +52,22 @@ static ID3_FieldDef ID3FD_Unimplemented[] =
 
 const ID3_FieldDef* ID3_FieldDef::DEFAULT = ID3FD_Unimplemented;
 
+static ID3_FieldDef ID3FD_Binary[] =
+{
+  {
+    ID3FN_DATA,                         // FIELD NAME
+    ID3FTY_BINARY,                      // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  { ID3FN_NOFIELD }
+};
+
 static ID3_FieldDef ID3FD_URL[] =
-{ 
+{
   {
     ID3FN_URL,                          // FIELD NAME
     ID3FTY_TEXTSTRING,                  // FIELD TYPE
@@ -65,11 +79,11 @@ static ID3_FieldDef ID3FD_URL[] =
   },
   { ID3FN_NOFIELD }
 };
-  
+
 static ID3_FieldDef ID3FD_UserURL[] =
 {
   {
-    ID3FN_TEXTENC,                      // FIELD NAME        
+    ID3FN_TEXTENC,                      // FIELD NAME
     ID3FTY_INTEGER,                     // FIELD TYPE
     1,                                  // FIXED LEN
     ID3V2_EARLIEST,                     // INITIAL SPEC
@@ -97,7 +111,7 @@ static ID3_FieldDef ID3FD_UserURL[] =
   },
   { ID3FN_NOFIELD }
 };
-  
+
 static ID3_FieldDef ID3FD_Text[] =
 {
   {
@@ -120,8 +134,8 @@ static ID3_FieldDef ID3FD_Text[] =
   },
   { ID3FN_NOFIELD }
 };
-  
-  
+
+
 static ID3_FieldDef ID3FD_UserText[] =
 {
   {
@@ -153,8 +167,7 @@ static ID3_FieldDef ID3FD_UserText[] =
   },
   { ID3FN_NOFIELD }
 };
-  
-  
+
 static ID3_FieldDef ID3FD_GeneralText[] =
 {
   {
@@ -327,7 +340,7 @@ static ID3_FieldDef ID3FD_Picture[] =
   },
   { ID3FN_NOFIELD }
 };
-  
+
 static ID3_FieldDef ID3FD_GEO[] =
 {
   {
@@ -377,7 +390,98 @@ static ID3_FieldDef ID3FD_GEO[] =
   },
   { ID3FN_NOFIELD }
 };
-  
+
+static ID3_FieldDef ID3FD_AudioEncryption[] =
+{
+  {
+    ID3FN_OWNER,                        // FIELD NAME
+    ID3FTY_TEXTSTRING,                  // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_CSTR,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_OFFSET,                       // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    2,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_LENGTH,                       // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    2,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_DATA,                         // FIELD NAME
+    ID3FTY_BINARY,                      // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  { ID3FN_NOFIELD }
+};
+
+static ID3_FieldDef ID3FD_AudioSeekPoint[] =
+{
+  {
+    ID3FN_OFFSET,                       // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    4,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_LENGTH,                       // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    4,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_NUMBER,                       // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    2,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_NUMBITS,                      // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    1,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_DATA,                         // FIELD NAME
+    ID3FTY_BINARY,                      // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  { ID3FN_NOFIELD }
+};
+
 static ID3_FieldDef ID3FD_UFI[] =
 {
   {
@@ -400,7 +504,7 @@ static ID3_FieldDef ID3FD_UFI[] =
   },
   { ID3FN_NOFIELD }
 };
-  
+
 static ID3_FieldDef ID3FD_PlayCounter[] =
 {
   {
@@ -414,7 +518,7 @@ static ID3_FieldDef ID3FD_PlayCounter[] =
   },
   { ID3FN_NOFIELD }
 };
-  
+
 static ID3_FieldDef ID3FD_Popularimeter[] =
 {
   {
@@ -469,8 +573,8 @@ static ID3_FieldDef ID3FD_Private[] =
   },
   { ID3FN_NOFIELD }
 };
-  
-  
+
+
 static ID3_FieldDef ID3FD_Registration[] =
 {
   {
@@ -502,8 +606,8 @@ static ID3_FieldDef ID3FD_Registration[] =
   },
   { ID3FN_NOFIELD }
 };
-  
-static ID3_FieldDef ID3FD_InvolvedPeople[] =
+
+static ID3_FieldDef ID3FD_TextList[] =
 {
   {
     ID3FN_TEXTENC,                      // FIELD NAME
@@ -520,7 +624,367 @@ static ID3_FieldDef ID3FD_InvolvedPeople[] =
     0,                                  // FIXED LEN
     ID3V2_EARLIEST,                     // INITIAL SPEC
     ID3V2_LATEST,                       // ENDING SPEC
-    ID3FF_TEXTLIST,                     // FLAGS
+    ID3FF_LIST | ID3FF_ENCODABLE,       // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  { ID3FN_NOFIELD }
+};
+
+static ID3_FieldDef ID3FD_EventTiming[] =
+{
+  {
+    ID3FN_TIMESTAMPFORMAT,              // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    1,                                  // FIXED LEN
+    ID3V2_EARLIEST,                          // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_DATA,                         // FIELD NAME
+    ID3FTY_BINARY,                      // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  { ID3FN_NOFIELD }
+};
+
+static ID3_FieldDef ID3FD_SyncTempo[] =
+{
+  {
+    ID3FN_TIMESTAMPFORMAT,              // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    1,                                  // FIXED LEN
+    ID3V2_EARLIEST,                          // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_DATA,                         // FIELD NAME
+    ID3FTY_BINARY,                      // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  { ID3FN_NOFIELD }
+};
+
+static ID3_FieldDef ID3FD_Reverb[] =
+{
+  {
+    ID3FN_REVERBL,                      // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    2,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_REVERBR,                      // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    2,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+   },
+  {
+    ID3FN_REVERBBOUNCESL,               // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    1,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+   },
+  {
+    ID3FN_REVERBBOUNCESR,               // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    1,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+   },
+  {
+    ID3FN_REVERBFEEDBACKL2L,            // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    1,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+   },
+  {
+    ID3FN_REVERBFEEDBACKL2R,            // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    1,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+   },
+  {
+    ID3FN_REVERBFEEDBACKR2R,            // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    1,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+   },
+  {
+    ID3FN_REVERBFEEDBACKR2L,            // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    1,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+   },
+  {
+    ID3FN_PREMIXL2R,                    // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    1,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+   },
+  {
+    ID3FN_PREMIXR2L,                    // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    1,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+   },
+  { ID3FN_NOFIELD }
+};
+
+static ID3_FieldDef ID3FD_Signature[] =
+{
+  {
+    ID3FN_ID,                           // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    1,                                  // FIXED LEN
+    ID3V2_4_0,                          // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_DATA,                         // FIELD NAME
+    ID3FTY_BINARY,                      // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_4_0,                          // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  { ID3FN_NOFIELD }
+};
+
+static ID3_FieldDef ID3FD_Commercial[] =
+{
+  {
+    ID3FN_TEXTENC,                      // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    1,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_PRICE,                        // FIELD NAME
+    ID3FTY_TEXTSTRING,                  // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_CSTR,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_8DATE,                        // FIELD NAME
+    ID3FTY_TEXTSTRING,                  // FIELD TYPE
+    8,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_URL,                          // FIELD NAME
+    ID3FTY_TEXTSTRING,                  // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_CSTR,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_DELIVERY,                     // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    1,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_SELLER,                       // FIELD NAME
+    ID3FTY_TEXTSTRING,                  // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_CSTR | ID3FF_ENCODABLE,       // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_DESCRIPTION,                  // FIELD NAME
+    ID3FTY_TEXTSTRING,                  // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_CSTR | ID3FF_ENCODABLE,       // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_MIMETYPE,                     // FIELD NAME
+    ID3FTY_TEXTSTRING,                  // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_CSTR,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_DATA,                         // FIELD NAME
+    ID3FTY_BINARY,                      // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  { ID3FN_NOFIELD }
+};
+
+static ID3_FieldDef ID3FD_Owner[] =
+{
+  {
+    ID3FN_TEXTENC,                      // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    1,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_PRICE,                        // FIELD NAME
+    ID3FTY_TEXTSTRING,                  // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_CSTR,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_8DATE,                        // FIELD NAME
+    ID3FTY_TEXTSTRING,                  // FIELD TYPE
+    8,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_SELLER,                       // FIELD NAME
+    ID3FTY_TEXTSTRING,                  // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_ENCODABLE,                    // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  { ID3FN_NOFIELD }
+};
+
+static ID3_FieldDef ID3FD_Seek[] =
+{
+  {
+    ID3FN_OFFSET,                       // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    4,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  { ID3FN_NOFIELD }
+};
+
+static ID3_FieldDef ID3FD_Position[] =
+{
+  {
+    ID3FN_TIMESTAMPFORMAT,              // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    1,                                  // FIXED LEN
+    ID3V2_EARLIEST,                          // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_OFFSET,                       // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  { ID3FN_NOFIELD }
+};
+
+static ID3_FieldDef ID3FD_Buffer[] =
+{
+  {
+    ID3FN_LENGTH,                       // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    3,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_FLAGS,                        // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    1,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
+    ID3FN_NOFIELD                       // LINKED FIELD
+  },
+  {
+    ID3FN_OFFSET,                       // FIELD NAME
+    ID3FTY_INTEGER,                     // FIELD TYPE
+    4,                                  // FIXED LEN
+    ID3V2_EARLIEST,                     // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_NONE,                         // FLAGS
     ID3FN_NOFIELD                       // LINKED FIELD
   },
   { ID3FN_NOFIELD }
@@ -539,7 +1003,7 @@ static ID3_FieldDef ID3FD_CDM[] =
   }
 };
 
-static ID3_FieldDef ID3FD_SyncLyrics[] = 
+static ID3_FieldDef ID3FD_SyncLyrics[] =
 {
   {
     ID3FN_TEXTENC,                      // FIELD NAME
@@ -603,7 +1067,7 @@ static ID3_FieldDef ID3FD_SyncLyrics[] =
  * Currently unused
  */
 #if defined _UNDEFINED_
-static ID3_FieldDef ID3FD_Volume[] =
+static ID3_FieldDef ID3FD_Volume1[] =
 {
   {
     ID3FN_VOLUMEADJ,                    // FIELD NAME
@@ -647,7 +1111,7 @@ static ID3_FieldDef ID3FD_Volume[] =
     0,                                  // FIXED LEN
     ID3V2_EARLIEST,                     // INITIAL SPEC
     ID3V2_LATEST,                       // ENDING SPEC
-    ID3FF_ADJUSTEDBY,                   // FLAGS
+    ID3FF_ADJUSTEDBY,  maybe this should be changed in ID3FF_OPTIONAL and ID3FF_USED, which should be set when used since this field is optional                // FLAGS
     ID3FN_NUMBITS                       // LINKED FIELD
   },
   {
@@ -656,7 +1120,79 @@ static ID3_FieldDef ID3FD_Volume[] =
     0,                                  // FIXED LEN
     ID3V2_EARLIEST,                     // INITIAL SPEC
     ID3V2_LATEST,                       // ENDING SPEC
-    ID3FF_ADJUSTEDBY,                   // FLAGS
+    ID3FF_ADJUSTEDBY,  maybe this should be changed in ID3FF_OPTIONAL and ID3FF_USED, which should be set when used since this field is optional                // FLAGS
+    ID3FN_NUMBITS                       // LINKED FIELD
+  },
+  {
+    ID3FN_VOLCHGRIGHTBACK,              // FIELD NAME
+    ID3FTY_BITFIELD,                    // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_2_1,                          // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_ADJUSTEDBY,  maybe this should be changed in ID3FF_OPTIONAL and ID3FF_USED, which should be set when used since this field is optional                // FLAGS
+    ID3FN_NUMBITS                       // LINKED FIELD
+  },
+  {
+    ID3FN_VOLCHGLEFTBACK,               // FIELD NAME
+    ID3FTY_BITFIELD,                    // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_2_1,                          // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_ADJUSTEDBY,  maybe this should be changed in ID3FF_OPTIONAL and ID3FF_USED, which should be set when used since this field is optional                // FLAGS
+    ID3FN_NUMBITS                       // LINKED FIELD
+  },
+  {
+    ID3FN_PEAKVOLRIGHTBACK,             // FIELD NAME
+    ID3FTY_BITFIELD,                    // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_2_1,                          // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_ADJUSTEDBY,  maybe this should be changed in ID3FF_OPTIONAL and ID3FF_USED, which should be set when used since this field is optional                // FLAGS
+    ID3FN_NUMBITS                       // LINKED FIELD
+  },
+  {
+    ID3FN_PEAKVOLLEFTBACK,              // FIELD NAME
+    ID3FTY_BITFIELD,                    // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_2_1,                          // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_ADJUSTEDBY,  maybe this should be changed in ID3FF_OPTIONAL and ID3FF_USED, which should be set when used since this field is optional                // FLAGS
+    ID3FN_NUMBITS                       // LINKED FIELD
+  },
+  {
+    ID3FN_VOLCHGCENTER,                 // FIELD NAME
+    ID3FTY_BITFIELD,                    // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_2_1,                          // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_ADJUSTEDBY,  maybe this should be changed in ID3FF_OPTIONAL and ID3FF_USED, which should be set when used since this field is optional                // FLAGS
+    ID3FN_NUMBITS                       // LINKED FIELD
+  },
+  {
+    ID3FN_PEAKVOLCENTER,                // FIELD NAME
+    ID3FTY_BITFIELD,                    // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_2_1,                          // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_ADJUSTEDBY,  maybe this should be changed in ID3FF_OPTIONAL and ID3FF_USED, which should be set when used since this field is optional                // FLAGS
+    ID3FN_NUMBITS                       // LINKED FIELD
+  },
+  {
+    ID3FN_VOLCHGBASS,                   // FIELD NAME
+    ID3FTY_BITFIELD,                    // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_2_1,                          // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_ADJUSTEDBY,  maybe this should be changed in ID3FF_OPTIONAL and ID3FF_USED, which should be set when used since this field is optional                // FLAGS
+    ID3FN_NUMBITS                       // LINKED FIELD
+  },
+  {
+    ID3FN_PEAKVOLBASS,                  // FIELD NAME
+    ID3FTY_BITFIELD,                    // FIELD TYPE
+    0,                                  // FIXED LEN
+    ID3V2_2_1,                          // INITIAL SPEC
+    ID3V2_LATEST,                       // ENDING SPEC
+    ID3FF_ADJUSTEDBY,  maybe this should be changed in ID3FF_OPTIONAL and ID3FF_USED, which should be set when used since this field is optional                // FLAGS
     ID3FN_NUMBITS                       // LINKED FIELD
   },
   { ID3FN_NOFIELD }
@@ -742,114 +1278,172 @@ static ID3_FieldDef ID3FD_Volume[] =
 // RVRB  REV  ID3FID_REVERB            Reverb
 // SYTC  STC  ID3FID_SYNCEDTEMPO       Synchronized tempo codes
 //       CRM  ID3FID_METACRYPTO        Encrypted meta frame
+ID3_Frame* convertEQUA(ID3_Frame* oldframe, ID3_V2Spec tospec)
+{
+  return NULL;
+}
+ID3_Frame* convertIPLS(ID3_Frame* oldframe, ID3_V2Spec tospec)
+{
+  if (tospec == ID3V2_4_0)
+  {
+    ID3_Frame* newframe = LEAKTESTNEW(ID3_Frame(ID3FID_INVOLVEDPEOPLE2));
+    newframe->GetField(ID3FN_TEXTENC)->SetEncoding(oldframe->GetField(ID3FN_TEXTENC)->GetEncoding());
+    newframe->GetField(ID3FN_TEXT)->SetText(oldframe->GetField(ID3FN_TEXT)->GetText());
+    return newframe;
+  }
+  else return NULL;
+}
+ID3_Frame* convertRVAD(ID3_Frame* oldframe, ID3_V2Spec tospec)
+{
+  return NULL;
+}
+ID3_Frame* convertTDAT(ID3_Frame* oldframe, ID3_V2Spec tospec)
+{
+  return NULL;
+}
+ID3_Frame* convertTIME(ID3_Frame* oldframe, ID3_V2Spec tospec)
+{
+  return NULL;
+}
+ID3_Frame* convertTORY(ID3_Frame* oldframe, ID3_V2Spec tospec)
+{
+  return NULL;
+}
+ID3_Frame* convertTRDA(ID3_Frame* oldframe, ID3_V2Spec tospec)
+{
+  return NULL;
+}
+ID3_Frame* convertTYER(ID3_Frame* oldframe, ID3_V2Spec tospec)
+{
+  return NULL;
+}
+
 static  ID3_FrameDef ID3_FrameDefs[] =
 {
-  //                          short  long   tag    file
-  // frame id                 id     id     discrd discrd field defs           description
-  {ID3FID_AUDIOCRYPTO,       "CRA", "AENC", false, false, ID3FD_Unimplemented, "Audio encryption"},
-  {ID3FID_PICTURE,           "PIC", "APIC", false, false, ID3FD_Picture,       "Attached picture"},
-  {ID3FID_COMMENT,           "COM", "COMM", false, false, ID3FD_GeneralText,   "Comments"},
-  {ID3FID_COMMERCIAL,        ""   , "COMR", false, false, ID3FD_Unimplemented, "Commercial"},
-  {ID3FID_CRYPTOREG,         ""   , "ENCR", false, false, ID3FD_Registration,  "Encryption method registration"},
-  {ID3FID_EQUALIZATION,      "EQU", "EQUA", false, true,  ID3FD_Unimplemented, "Equalization"},
-  {ID3FID_EVENTTIMING,       "ETC", "ETCO", false, true,  ID3FD_Unimplemented, "Event timing codes"},
-  {ID3FID_GENERALOBJECT,     "GEO", "GEOB", false, false, ID3FD_GEO,           "General encapsulated object"},
-  {ID3FID_GROUPINGREG,       ""   , "GRID", false, false, ID3FD_Registration,  "Group identification registration"},
-  {ID3FID_INVOLVEDPEOPLE,    "IPL", "IPLS", false, false, ID3FD_InvolvedPeople,"Involved people list"},
-  {ID3FID_LINKEDINFO,        "LNK", "LINK", false, false, ID3FD_LinkedInfo,    "Linked information"},
-  {ID3FID_CDID,              "MCI", "MCDI", false, false, ID3FD_Unimplemented, "Music CD identifier"},
-  {ID3FID_MPEGLOOKUP,        "MLL", "MLLT", false, true,  ID3FD_Unimplemented, "MPEG location lookup table"},
-  {ID3FID_OWNERSHIP,         ""   , "OWNE", false, false, ID3FD_Unimplemented, "Ownership frame"},
-  {ID3FID_PRIVATE,           ""   , "PRIV", false, false, ID3FD_Private,       "Private frame"},
-  {ID3FID_PLAYCOUNTER,       "CNT", "PCNT", false, false, ID3FD_PlayCounter,   "Play counter"},
-  {ID3FID_POPULARIMETER,     "POP", "POPM", false, false, ID3FD_Popularimeter, "Popularimeter"},
-  {ID3FID_POSITIONSYNC,      ""   , "POSS", false, true,  ID3FD_Unimplemented, "Position synchronisation frame"},
-  {ID3FID_BUFFERSIZE,        "BUF", "RBUF", false, false, ID3FD_Unimplemented, "Recommended buffer size"},
-  {ID3FID_VOLUMEADJ,         "RVA", "RVAD", false, true,  ID3FD_Unimplemented, "Relative volume adjustment"},
-  {ID3FID_REVERB,            "REV", "RVRB", false, false, ID3FD_Unimplemented, "Reverb"},
-  {ID3FID_SYNCEDLYRICS,      "SLT", "SYLT", false, false, ID3FD_SyncLyrics,    "Synchronized lyric/text"},
-  {ID3FID_SYNCEDTEMPO,       "STC", "SYTC", false, true,  ID3FD_Unimplemented, "Synchronized tempo codes"},
-  {ID3FID_ALBUM,             "TAL", "TALB", false, false, ID3FD_Text,          "Album/Movie/Show title"},
-  {ID3FID_BPM,               "TBP", "TBPM", false, false, ID3FD_Text,          "BPM (beats per minute)"},
-  {ID3FID_COMPOSER,          "TCM", "TCOM", false, false, ID3FD_Text,          "Composer"},
-  {ID3FID_CONTENTTYPE,       "TCO", "TCON", false, false, ID3FD_Text,          "Content type"},
-  {ID3FID_COPYRIGHT,         "TCR", "TCOP", false, false, ID3FD_Text,          "Copyright message"},
-  {ID3FID_DATE,              "TDA", "TDAT", false, false, ID3FD_Text,          "Date"},
-  {ID3FID_PLAYLISTDELAY,     "TDY", "TDLY", false, false, ID3FD_Text,          "Playlist delay"},
-  {ID3FID_ENCODEDBY,         "TEN", "TENC", false, true,  ID3FD_Text,          "Encoded by"},
-  {ID3FID_LYRICIST,          "TXT", "TEXT", false, false, ID3FD_Text,          "Lyricist/Text writer"},
-  {ID3FID_FILETYPE,          "TFT", "TFLT", false, false, ID3FD_Text,          "File type"},
-  {ID3FID_TIME,              "TIM", "TIME", false, false, ID3FD_Text,          "Time"},
-  {ID3FID_CONTENTGROUP,      "TT1", "TIT1", false, false, ID3FD_Text,          "Content group description"},
-  {ID3FID_TITLE,             "TT2", "TIT2", false, false, ID3FD_Text,          "Title/songname/content description"},
-  {ID3FID_SUBTITLE,          "TT3", "TIT3", false, false, ID3FD_Text,          "Subtitle/Description refinement"},
-  {ID3FID_INITIALKEY,        "TKE", "TKEY", false, false, ID3FD_Text,          "Initial key"},
-  {ID3FID_LANGUAGE,          "TLA", "TLAN", false, false, ID3FD_Text,          "Language(s)"},
-  {ID3FID_SONGLEN,           "TLE", "TLEN", false, true,  ID3FD_Text,          "Length"},
-  {ID3FID_MEDIATYPE,         "TMT", "TMED", false, false, ID3FD_Text,          "Media type"},
-  {ID3FID_ORIGALBUM,         "TOT", "TOAL", false, false, ID3FD_Text,          "Original album/movie/show title"},
-  {ID3FID_ORIGFILENAME,      "TOF", "TOFN", false, false, ID3FD_Text,          "Original filename"},
-  {ID3FID_ORIGLYRICIST,      "TOL", "TOLY", false, false, ID3FD_Text,          "Original lyricist(s)/text writer(s)"},
-  {ID3FID_ORIGARTIST,        "TOA", "TOPE", false, false, ID3FD_Text,          "Original artist(s)/performer(s)"},
-  {ID3FID_ORIGYEAR,          "TOR", "TORY", false, false, ID3FD_Text,          "Original release year"},
-  {ID3FID_FILEOWNER,         ""   , "TOWN", false, false, ID3FD_Text,          "File owner/licensee"},
-  {ID3FID_LEADARTIST,        "TP1", "TPE1", false, false, ID3FD_Text,          "Lead performer(s)/Soloist(s)"},
-  {ID3FID_BAND,              "TP2", "TPE2", false, false, ID3FD_Text,          "Band/orchestra/accompaniment"},
-  {ID3FID_CONDUCTOR,         "TP3", "TPE3", false, false, ID3FD_Text,          "Conductor/performer refinement"},
-  {ID3FID_MIXARTIST,         "TP4", "TPE4", false, false, ID3FD_Text,          "Interpreted, remixed, or otherwise modified by"},
-  {ID3FID_PARTINSET,         "TPA", "TPOS", false, false, ID3FD_Text,          "Part of a set"},
-  {ID3FID_PUBLISHER,         "TPB", "TPUB", false, false, ID3FD_Text,          "Publisher"},
-  {ID3FID_TRACKNUM,          "TRK", "TRCK", false, false, ID3FD_Text,          "Track number/Position in set"},
-  {ID3FID_RECORDINGDATES,    "TRD", "TRDA", false, false, ID3FD_Text,          "Recording dates"},
-  {ID3FID_NETRADIOSTATION,   "TRN", "TRSN", false, false, ID3FD_Text,          "Internet radio station name"},
-  {ID3FID_NETRADIOOWNER,     "TRO", "TRSO", false, false, ID3FD_Text,          "Internet radio station owner"},
-  {ID3FID_SIZE,              "TSI", "TSIZ", false, true,  ID3FD_Text,          "Size"},
-  {ID3FID_ISRC,              "TRC", "TSRC", false, false, ID3FD_Text,          "ISRC (international standard recording code)"},
-  {ID3FID_ENCODERSETTINGS,   "TSS", "TSSE", false, false, ID3FD_Text,          "Software/Hardware and settings used for encoding"},
-  {ID3FID_USERTEXT,          "TXX", "TXXX", false, false, ID3FD_UserText,      "User defined text information"},
-  {ID3FID_YEAR,              "TYE", "TYER", false, false, ID3FD_Text,          "Year"},
-  {ID3FID_UNIQUEFILEID,      "UFI", "UFID", false, false, ID3FD_UFI,           "Unique file identifier"},
-  {ID3FID_TERMSOFUSE,        ""   , "USER", false, false, ID3FD_TermsOfUse,    "Terms of use"},
-  {ID3FID_UNSYNCEDLYRICS,    "ULT", "USLT", false, false, ID3FD_GeneralText,   "Unsynchronized lyric/text transcription"},
-  {ID3FID_WWWCOMMERCIALINFO, "WCM", "WCOM", false, false, ID3FD_URL,           "Commercial information"},
-  {ID3FID_WWWCOPYRIGHT,      "WCP", "WCOP", false, false, ID3FD_URL,           "Copyright/Legal infromation"},
-  {ID3FID_WWWAUDIOFILE,      "WAF", "WOAF", false, false, ID3FD_URL,           "Official audio file webpage"},
-  {ID3FID_WWWARTIST,         "WAR", "WOAR", false, false, ID3FD_URL,           "Official artist/performer webpage"},
-  {ID3FID_WWWAUDIOSOURCE,    "WAS", "WOAS", false, false, ID3FD_URL,           "Official audio source webpage"},
-  {ID3FID_WWWRADIOPAGE,      "WRA", "WORS", false, false, ID3FD_URL,           "Official internet radio station homepage"},
-  {ID3FID_WWWPAYMENT,        "WPY", "WPAY", false, false, ID3FD_URL,           "Payment"},
-  {ID3FID_WWWPUBLISHER,      "WPB", "WPUB", false, false, ID3FD_URL,           "Official publisher webpage"},
-  {ID3FID_WWWUSER,           "WXX", "WXXX", false, false, ID3FD_UserURL,       "User defined URL link"},
-  {ID3FID_METACRYPTO,        "CRM", ""    , false, false, ID3FD_Unimplemented, "Encrypted meta frame"},
-  {ID3FID_METACOMPRESSION,   "CDM", ""    , false, false, ID3FD_CDM,           "Compressed data meta frame"},
+  //                          short  long    born            died          replace      tag    file
+  // frame id                 id     id      tag             tag           id           discrd discrd field defs            description
+  {ID3FID_AUDIOCRYPTO,        "CRA", "AENC", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_AudioEncryption,"Audio encryption"},
+  {ID3FID_PICTURE,            "PIC", "APIC", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Picture,        "Attached picture"},
+  {ID3FID_AUDIOSEEKPOINT,     ""   , "ASPI", ID3V2_4_0,      ID3V2_LATEST, NULL,        false, false, ID3FD_AudioSeekPoint, "Audio seek point index"},
+  {ID3FID_COMMENT,            "COM", "COMM", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_GeneralText,    "Comments"},
+  {ID3FID_COMMERCIAL,         ""   , "COMR", ID3V2_3_0     , ID3V2_LATEST, NULL,        false, false, ID3FD_Commercial,     "Commercial"},
+  {ID3FID_CRYPTOREG,          ""   , "ENCR", ID3V2_3_0     , ID3V2_LATEST, NULL,        false, false, ID3FD_Registration,   "Encryption method registration"},
+  {ID3FID_EQUALIZATION2,      ""   , "EQU2", ID3V2_4_0,      ID3V2_LATEST, NULL,        false, false, ID3FD_Unimplemented,  "Equalisation (2)"},
+  {ID3FID_EQUALIZATION,       "EQU", "EQUA", ID3V2_EARLIEST, ID3V2_3_0,    convertEQUA, false, true,  ID3FD_Unimplemented,  "Equalization"},
+  {ID3FID_EVENTTIMING,        "ETC", "ETCO", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, true,  ID3FD_EventTiming,    "Event timing codes"},
+  {ID3FID_GENERALOBJECT,      "GEO", "GEOB", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_GEO,            "General encapsulated object"},
+  {ID3FID_GROUPINGREG,        ""   , "GRID", ID3V2_3_0     , ID3V2_LATEST, NULL,        false, false, ID3FD_Registration,   "Group identification registration"},
+  {ID3FID_INVOLVEDPEOPLE,     "IPL", "IPLS", ID3V2_EARLIEST, ID3V2_3_0,    convertIPLS, false, false, ID3FD_TextList,       "Involved people list"},
+  {ID3FID_LINKEDINFO,         "LNK", "LINK", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_LinkedInfo,     "Linked information"},
+  {ID3FID_CDID,               "MCI", "MCDI", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Binary,         "Music CD identifier"},
+  {ID3FID_MPEGLOOKUP,         "MLL", "MLLT", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, true,  ID3FD_Unimplemented,  "MPEG location lookup table"},
+  {ID3FID_OWNERSHIP,          ""   , "OWNE", ID3V2_3_0     , ID3V2_LATEST, NULL,        false, false, ID3FD_Owner,          "Ownership frame"},
+  {ID3FID_PRIVATE,            ""   , "PRIV", ID3V2_3_0     , ID3V2_LATEST, NULL,        false, false, ID3FD_Private,        "Private frame"},
+  {ID3FID_PLAYCOUNTER,        "CNT", "PCNT", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_PlayCounter,    "Play counter"},
+  {ID3FID_POPULARIMETER,      "POP", "POPM", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Popularimeter,  "Popularimeter"},
+  {ID3FID_POSITIONSYNC,       ""   , "POSS", ID3V2_3_0     , ID3V2_LATEST, NULL,        false, true,  ID3FD_Position,       "Position synchronisation frame"},
+  {ID3FID_BUFFERSIZE,         "BUF", "RBUF", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Buffer,         "Recommended buffer size"},
+  {ID3FID_VOLUMEADJ2,         ""   , "RVA2", ID3V2_4_0      ,ID3V2_LATEST, NULL,        false, false, ID3FD_Unimplemented,  "Relative volume adjustment (2)"},
+  {ID3FID_VOLUMEADJ,          "RVA", "RVAD", ID3V2_EARLIEST, ID3V2_3_0,    convertRVAD, false, true,  ID3FD_Unimplemented,  "Relative volume adjustment"},
+  {ID3FID_REVERB,             "REV", "RVRB", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Reverb,         "Reverb"},
+  {ID3FID_SEEKFRAME,          ""   , "SEEK", ID3V2_4_0      ,ID3V2_LATEST, NULL,        false, false, ID3FD_Seek,           "Seek frame"},
+  {ID3FID_SIGNATURE,          ""   , "SIGN", ID3V2_4_0      ,ID3V2_LATEST, NULL,        false, false, ID3FD_Signature,      "Signature frame"},
+  {ID3FID_SYNCEDLYRICS,       "SLT", "SYLT", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_SyncLyrics,     "Synchronized lyric/text"},
+  {ID3FID_SYNCEDTEMPO,        "STC", "SYTC", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, true,  ID3FD_SyncTempo,      "Synchronized tempo codes"},
+  {ID3FID_ALBUM,              "TAL", "TALB", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Album/Movie/Show title"},
+  {ID3FID_BPM,                "TBP", "TBPM", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "BPM (beats per minute)"},
+  {ID3FID_COMPOSER,           "TCM", "TCOM", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Composer"},
+  {ID3FID_CONTENTTYPE,        "TCO", "TCON", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Content type"},
+  {ID3FID_COPYRIGHT,          "TCR", "TCOP", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Copyright message"},
+  {ID3FID_DATE,               "TDA", "TDAT", ID3V2_EARLIEST, ID3V2_3_0,    convertTDAT, false, false, ID3FD_Text,           "Date"},
+  {ID3FID_ENCODINGTIME,       ""   , "TDEN", ID3V2_4_0      ,ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Encoding time"},
+  {ID3FID_PLAYLISTDELAY,      "TDY", "TDLY", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Playlist delay"},
+  {ID3FID_ORIGRELEASETIME,    ""   , "TDOR", ID3V2_4_0      ,ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Original release time"},
+  {ID3FID_RECORDINGTIME,      ""   , "TDRC", ID3V2_4_0      ,ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Recording time"},
+  {ID3FID_RELEASETIME,        ""   , "TDRL", ID3V2_4_0      ,ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Release time"},
+  {ID3FID_TAGGINGTIME,        ""   , "TDTG", ID3V2_4_0      ,ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Tagging time"},
+  {ID3FID_ENCODEDBY,          "TEN", "TENC", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, true,  ID3FD_Text,           "Encoded by"},
+  {ID3FID_LYRICIST,           "TXT", "TEXT", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Lyricist/Text writer"},
+  {ID3FID_FILETYPE,           "TFT", "TFLT", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "File type"},
+  {ID3FID_TIME,               "TIM", "TIME", ID3V2_EARLIEST, ID3V2_3_0,    convertTIME, false, false, ID3FD_Text,           "Time"},
+  {ID3FID_INVOLVEDPEOPLE2,    ""   , "TIPL", ID3V2_4_0      ,ID3V2_LATEST, NULL,        false, false, ID3FD_TextList,       "Involved people list"},
+  {ID3FID_CONTENTGROUP,       "TT1", "TIT1", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Content group description"},
+  {ID3FID_TITLE,              "TT2", "TIT2", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Title/songname/content description"},
+  {ID3FID_SUBTITLE,           "TT3", "TIT3", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Subtitle/Description refinement"},
+  {ID3FID_INITIALKEY,         "TKE", "TKEY", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Initial key"},
+  {ID3FID_LANGUAGE,           "TLA", "TLAN", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Language(s)"},
+  {ID3FID_SONGLEN,            "TLE", "TLEN", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, true,  ID3FD_Text,           "Length"},
+  {ID3FID_MUSICIANCREDITLIST, ""   , "TMCL", ID3V2_4_0      ,ID3V2_LATEST, NULL,        false, false, ID3FD_TextList,       "Musician credits list"},
+  {ID3FID_MEDIATYPE,          "TMT", "TMED", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Media type"},
+  {ID3FID_MOOD,               ""   , "TMOO", ID3V2_4_0      ,ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Mood"},
+  {ID3FID_ORIGALBUM,          "TOT", "TOAL", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Original album/movie/show title"},
+  {ID3FID_ORIGFILENAME,       "TOF", "TOFN", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Original filename"},
+  {ID3FID_ORIGLYRICIST,       "TOL", "TOLY", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Original lyricist(s)/text writer(s)"},
+  {ID3FID_ORIGARTIST,         "TOA", "TOPE", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Original artist(s)/performer(s)"},
+  {ID3FID_ORIGYEAR,           "TOR", "TORY", ID3V2_EARLIEST, ID3V2_3_0,    convertTORY, false, false, ID3FD_Text,           "Original release year"},
+  {ID3FID_FILEOWNER,          ""   , "TOWN", ID3V2_3_0     , ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "File owner/licensee"},
+  {ID3FID_LEADARTIST,         "TP1", "TPE1", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Lead performer(s)/Soloist(s)"},
+  {ID3FID_BAND,               "TP2", "TPE2", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Band/orchestra/accompaniment"},
+  {ID3FID_CONDUCTOR,          "TP3", "TPE3", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Conductor/performer refinement"},
+  {ID3FID_MIXARTIST,          "TP4", "TPE4", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Interpreted, remixed, or otherwise modified by"},
+  {ID3FID_PARTINSET,          "TPA", "TPOS", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Part of a set"},
+  {ID3FID_PRODUCEDNOTICE,     ""   , "TPRO", ID3V2_4_0      ,ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Produced notice"},
+  {ID3FID_PUBLISHER,          "TPB", "TPUB", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Publisher"},
+  {ID3FID_TRACKNUM,           "TRK", "TRCK", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Track number/Position in set"},
+  {ID3FID_RECORDINGDATES,     "TRD", "TRDA", ID3V2_EARLIEST, ID3V2_3_0,    convertTRDA, false, false, ID3FD_Text,           "Recording dates"},
+  {ID3FID_NETRADIOSTATION,    "TRN", "TRSN", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Internet radio station name"},
+  {ID3FID_NETRADIOOWNER,      "TRO", "TRSO", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Internet radio station owner"},
+  {ID3FID_SIZE,               "TSI", "TSIZ", ID3V2_EARLIEST, ID3V2_3_0,    NULL,        false, true,  ID3FD_Text,           "Size"},
+  {ID3FID_ALBUMSORTORDER,     ""   , "TSOA", ID3V2_4_0      ,ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Album sort order"},
+  {ID3FID_PERFORMERSORTORDER, ""   , "TSOP", ID3V2_4_0      ,ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Performer sort order"},
+  {ID3FID_TITLESORTORDER,     ""   , "TSOT", ID3V2_4_0      ,ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Title sort order"},
+  {ID3FID_ISRC,               "TRC", "TSRC", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "ISRC (international standard recording code)"},//http://www.ifpi.org/isrc/isrc_handbook.html
+  {ID3FID_ENCODERSETTINGS,    "TSS", "TSSE", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Software/Hardware and settings used for encoding"},
+  {ID3FID_SETSUBTITLE,        ""   , "TSST", ID3V2_4_0      ,ID3V2_LATEST, NULL,        false, false, ID3FD_Text,           "Set subtitle"},
+  {ID3FID_USERTEXT,           "TXX", "TXXX", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_UserText,       "User defined text information"},
+  {ID3FID_YEAR,               "TYE", "TYER", ID3V2_EARLIEST, ID3V2_3_0,    convertTYER, false, false, ID3FD_Text,           "Year"},
+  {ID3FID_UNIQUEFILEID,       "UFI", "UFID", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_UFI,            "Unique file identifier"},
+  {ID3FID_TERMSOFUSE,         ""   , "USER", ID3V2_3_0     , ID3V2_LATEST, NULL,        false, false, ID3FD_TermsOfUse,     "Terms of use"},
+  {ID3FID_UNSYNCEDLYRICS,     "ULT", "USLT", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_GeneralText,    "Unsynchronized lyric/text transcription"},
+  {ID3FID_WWWCOMMERCIALINFO,  "WCM", "WCOM", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_URL,            "Commercial information"},
+  {ID3FID_WWWCOPYRIGHT,       "WCP", "WCOP", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_URL,            "Copyright/Legal infromation"},
+  {ID3FID_WWWAUDIOFILE,       "WAF", "WOAF", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_URL,            "Official audio file webpage"},
+  {ID3FID_WWWARTIST,          "WAR", "WOAR", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_URL,            "Official artist/performer webpage"},
+  {ID3FID_WWWAUDIOSOURCE,     "WAS", "WOAS", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_URL,            "Official audio source webpage"},
+  {ID3FID_WWWRADIOPAGE,       "WRA", "WORS", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_URL,            "Official internet radio station homepage"},
+  {ID3FID_WWWPAYMENT,         "WPY", "WPAY", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_URL,            "Payment"},
+  {ID3FID_WWWPUBLISHER,       "WPB", "WPUB", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_URL,            "Official publisher webpage"},
+  {ID3FID_WWWUSER,            "WXX", "WXXX", ID3V2_EARLIEST, ID3V2_LATEST, NULL,        false, false, ID3FD_UserURL,        "User defined URL link"},
+  {ID3FID_METACRYPTO,         "CRM", ""    , ID3V2_EARLIEST, ID3V2_2_1,    NULL,        false, false, ID3FD_Unimplemented,  "Encrypted meta frame"},
+  {ID3FID_METACOMPRESSION,    "CDM", ""    , ID3V2_2_1,      ID3V2_2_1,    NULL,        false, false, ID3FD_CDM,            "Compressed data meta frame"},
   {ID3FID_NOFRAME}
 };
-  
+
 /** \class ID3_Field field.h id3/field.h
  ** \brief The representative class of an ID3v2 field.
- ** 
+ **
  ** As a general rule, you need never create an object of this type.  id3lib
  ** uses them internally as part of the id3_frame class.  You must know how to
  ** interact with these objects, though, and that's what this section is about.
- ** 
+ **
  ** The ID3_Field contains many overloaded methods to provide these facilities
  ** for four different data types: integers, ASCII strings, Unicode strings,
  ** and binary data.
- ** 
+ **
  ** An integer field supports the Get(), Set(uint32), and operator=(uint32)
  ** methods.
- ** 
+ **
  ** Both types of strings support the GetNumTextItems() method.
- ** 
- ** An ASCII string field supports the Get(char*, size_t, size_t)), 
+ **
+ ** An ASCII string field supports the Get(char*, size_t, size_t)),
  ** Set(const char*), Add(const char*), and operator=(const char*) methods.
- ** 
+ **
  ** A Unicode field also supports Get(unicode_t*, size_t, size_t),
- ** Set(const unicode_t*), Add(const unicode_t*), and 
+ ** Set(const unicode_t*), Add(const unicode_t*), and
  ** operator=(const unicode_t*).  Without elaborating, the Unicode
  ** methods behave exactly the same as their ASCII counterparts, taking
  ** \c unicode_t pointers in place of \c char pointers.
- ** 
+ **
  ** All strings in id3lib are handled internally as Unicode.  This means that
  ** when you set a field with an ASCII source type, it will be converted and
  ** stored internally as a Unicode string.  id3lib will handle all necessary
@@ -859,12 +1453,12 @@ static  ID3_FrameDef ID3_FrameDefs[] =
  ** function as expected.  The same holds true in reverse.  Of course, when
  ** converting from Unicode to ASCII, you will experience problems when the
  ** Unicode string contains characters that don't map to ISO-8859-1.
- ** 
+ **
  ** A binary field supports the Get(uchar*, size_t), Set(const uchar*, size_t),
  ** FromFile(const char*), and ToFile(const char*) methods.  The binary field
  ** holds miscellaneous data that can't easily be described any other way, such
  ** as a JPEG image.
- ** 
+ **
  ** As a general implementation note, you should be prepared to support all
  ** fields in an id3lib frame, even if all fields in the id3lib version of the
  ** frame aren't present in the id3v2 version.  This is because of frames like
@@ -874,12 +1468,12 @@ static  ID3_FrameDef ID3_FrameDefs[] =
  ** generate the correct id3v2 frame for the id3v2 version you wish to support.
  ** Alternatively, just support the fields you know will be used in, say, 3.0
  ** if you only plan to generate 3.0 tags.
- ** 
+ **
  ** @author Dirk Mahoney
- ** @version $Id: field.cpp,v 1.46 2002/07/31 13:45:18 t1mpy Exp $
+ ** @version $Id: field.cpp,v 1.47 2002/09/13 15:37:35 t1mpy Exp $
  ** \sa ID3_Tag
  ** \sa ID3_Frame
- ** \sa ID3_Err 
+ ** \sa ID3_Err
  **/
 
 ID3_FieldImpl::ID3_FieldImpl()
@@ -890,6 +1484,7 @@ ID3_FieldImpl::ID3_FieldImpl()
     _flags(0),
     _changed(false),
     _fixed_size(0),
+    _linked_field(ID3FN_NOFIELD),
     _num_items(0),
     _enc(ID3TE_NONE)
 {
@@ -904,8 +1499,9 @@ ID3_FieldImpl::ID3_FieldImpl(const ID3_FieldDef& def)
     _flags(def._flags),
     _changed(false),
     _fixed_size(def._fixed_size),
+    _linked_field(def._linked_field),
     _num_items(0),
-    _enc((_type == ID3FTY_TEXTSTRING) ? ID3TE_ASCII : ID3TE_NONE)
+    _enc((_type == ID3FTY_TEXTSTRING) ? ID3TE_ISO8859_1 : ID3TE_NONE)
 {
   this->Clear();
 }
@@ -914,8 +1510,30 @@ ID3_FieldImpl::~ID3_FieldImpl()
 {
 }
 
+// returns whether field should be parsed, set's it's brand new fixed size
+bool ID3_FieldImpl::SetLinkedSize(size_t newfixedsize)
+{
+  // check whether it has a fixed size flag and a _linked_field
+  if (this->HasFlag(ID3FF_HASLINKEDSIZE) && _linked_field != ID3FN_NOFIELD)
+  {
+    // check whether it has a fixed size flag and a _linked_field
+    if (newfixedsize != 0)
+    {
+      _fixed_size = newfixedsize;
+      ID3D_NOTICE( "ID3_FieldImpl::SetLinkedSize(): used linked_fixed_size = " << newfixedsize );
+      return true;
+    }
+    else
+    {
+      //this field should not exist or be parsed!
+      return false;
+    }
+  }
+  return true;
+}
+
 /** Clears any data and frees any memory associated with the field
- ** 
+ **
  ** \sa ID3_Tag::Clear()
  ** \sa ID3_Frame::Clear()
  **/
@@ -942,11 +1560,11 @@ void ID3_FieldImpl::Clear()
       _text.erase();
       if (_fixed_size > 0)
       {
-        if (this->GetEncoding() == ID3TE_UNICODE)
+        if (ID3TE_IS_DOUBLE_BYTE_ENC(this->GetEncoding()))
         {
           _text.assign(_fixed_size * 2, '\0');
         }
-        else if (this->GetEncoding() == ID3TE_ASCII)
+        else if (ID3TE_IS_SINGLE_BYTE_ENC(this->GetEncoding()))
         {
           _text.assign(_fixed_size, '\0');
         }
@@ -959,7 +1577,7 @@ void ID3_FieldImpl::Clear()
     }
   }
   _changed    = true;
-  
+
   return ;
 }
 
@@ -971,7 +1589,7 @@ ID3_FieldImpl::HasChanged() const
 
 /** \fn size_t ID3_Field::Size() const
  ** \brief Returns the size of a field.
- ** 
+ **
  ** The value returned is dependent on the type of the field.  For ASCII
  ** strings, this returns the number of characters in the field, not including
  ** any NULL-terminator.  The same holds true for Unicode---it returns the
@@ -979,11 +1597,11 @@ ID3_FieldImpl::HasChanged() const
  ** the Unicode BOM, which isn't put in a Unicode string obtained by the
  ** Get(unicode_t*, size_t, size_t) method anyway.  For binary and
  ** integer fields, this returns the number of bytes in the field.
- ** 
+ **
  ** \code
  **   size_t howBig = myFrame.GetField(ID3FN_DATA)->Size();
  ** \endcode
- ** 
+ **
  ** \return The size of the field, either in bytes (for binary or integer
  **         fields) or characters (for strings).
  **/
@@ -998,7 +1616,7 @@ size_t ID3_FieldImpl::BinSize() const
   if (_type == ID3FTY_TEXTSTRING)
   {
     ID3_TextEnc enc = this->GetEncoding();
-    if (enc == ID3TE_UNICODE && size > 0)
+    if (ID3TE_IS_DOUBLE_BYTE_ENC(enc) && size > 0)
     {
       size++;
     }
@@ -1006,7 +1624,7 @@ size_t ID3_FieldImpl::BinSize() const
     {
       size++;
     }
-    if (enc == ID3TE_UNICODE)
+    if (ID3TE_IS_DOUBLE_BYTE_ENC(enc))
     {
       size *= 2;
     }
@@ -1049,13 +1667,13 @@ bool ID3_FieldImpl::Parse(ID3_Reader& reader)
       success = this->ParseInteger(reader);
       break;
     }
-        
+
     case ID3FTY_BINARY:
     {
       success = this->ParseBinary(reader);
       break;
     }
-        
+
     case ID3FTY_TEXTSTRING:
     {
       success = this->ParseText(reader);
@@ -1083,7 +1701,7 @@ ID3_FrameDef* ID3_FindFrameDef(ID3_FrameID id)
       break;
     }
   }
-    
+
   return info;
 }
 
@@ -1091,7 +1709,7 @@ ID3_FrameID
 ID3_FindFrameID(const char *id)
 {
   ID3_FrameID fid = ID3FID_NOFRAME;
-  
+
   for (size_t cur = 0; ID3_FrameDefs[cur].eID != ID3FID_NOFRAME; cur++)
   {
     if (((strcmp(ID3_FrameDefs[cur].sShortTextID, id) == 0) &&
@@ -1103,38 +1721,39 @@ ID3_FindFrameID(const char *id)
       break;
     }
   }
-  
+
   return fid;
 }
 
-void ID3_FieldImpl::Render(ID3_Writer& writer) const
+ID3_Err ID3_FieldImpl::Render(ID3_Writer& writer) const
 {
-  switch (this->GetType()) 
+  switch (this->GetType())
   {
     case ID3FTY_INTEGER:
     {
       RenderInteger(writer);
       break;
     }
-        
+
     case ID3FTY_BINARY:
     {
       RenderBinary(writer);
       break;
     }
-        
+
     case ID3FTY_TEXTSTRING:
     {
       RenderText(writer);
       break;
     }
-        
+
     default:
     {
       ID3D_WARNING ( "ID3D_FieldImpl::Render(): unknown field type" );
-      break;
+      return ID3E_UnknownFieldType;
     }
   }
+  return ID3E_NoError;
 }
 
 ID3_Field &
@@ -1185,7 +1804,7 @@ bool ID3_FieldImpl::SetEncoding(ID3_TextEnc enc)
 
 /** \class ID3_FrameInfo field.h id3/field.h
  ** \brief Provides information about the frame and field types supported by id3lib
- ** 
+ **
  ** You normally only need (at most) one instance of the ID3_FrameInfo.  It
  ** has no member data -- only methods which provide information about the
  ** frame types (and their component fields) supported by id3lib as defined
@@ -1194,17 +1813,17 @@ bool ID3_FieldImpl::SetEncoding(ID3_TextEnc enc)
  ** Usage is straightforward.  The following function uses ID3_FrameInfo
  ** to display a summary of all the frames known to id3lib:
  ** \code
- ** 
+ **
  ** void ShowKnownFrameInfo {
  **   ID3_FrameInfo myFrameInfo;
  **   for (int cur = ID3FID_NOFRAME+1; cur <= myFrameInfo.MaxFrameID(); cur ++)
- **   { 
+ **   {
  **     cout << "Short ID: " << myFrameInfo.ShortName(ID3_FrameID(cur)) <<
  **     " Long ID: " << myFrameInfo.LongName(ID3_FrameID(cur)) <<
  **     " Desription: " << myFrameInfo.Description(ID3_FrameID(cur)) << endl;
  **   }
- ** } 
- ** \endcode 
+ ** }
+ ** \endcode
  **
  ** Functions are also provided to glean more information about the individual
  ** fields which make up any given frame type.  The following for() loop,
@@ -1233,7 +1852,7 @@ bool ID3_FieldImpl::SetEncoding(ID3_TextEnc enc)
  ** \endcode
  **
  ** @author Cedric Tefft
- ** @version $Id: field.cpp,v 1.46 2002/07/31 13:45:18 t1mpy Exp $
+ ** @version $Id: field.cpp,v 1.47 2002/09/13 15:37:35 t1mpy Exp $
  **/
 
 
