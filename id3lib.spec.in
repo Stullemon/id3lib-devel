@@ -1,4 +1,4 @@
-# $Id: id3lib.spec.in,v 1.26 2001/12/17 17:20:41 shadrack Exp $
+# $Id: id3lib.spec.in,v 1.27 2002/11/02 18:04:49 t1mpy Exp $
 
 %define name    @PACKAGE@
 %define	version	@VERSION@
@@ -24,7 +24,7 @@ It provides a convenient interface for software developers to include
 standards-compliant ID3v1/2 tagging capabilities in their applications.  
 Features include identification of valid tags, automatic size conversions, 
 (re)synchronisation of tag frames, seamless tag (de)compression, and optional
-padding facilities.
+padding facilities. Additionally, it can tell mp3 header info, like bitrate etc.
 
 %package	devel
 Summary:	Headers for developing programs that will use id3lib
