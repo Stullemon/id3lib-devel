@@ -1,7 +1,8 @@
-// $Id: header_frame.cpp,v 1.22 2002/07/02 22:13:10 t1mpy Exp $
+// $Id: header_frame.cpp,v 1.23 2002/09/13 15:37:23 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
+// Copyright 2002 Thijmen Klok (thijmen@id3lib.org)
 
 // This library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU Library General Public License as published by
@@ -38,7 +39,7 @@ using namespace dami;
 void ID3_FrameHeader::SetUnknownFrame(const char* id)
 {
   Clear();
-  _frame_def = new ID3_FrameDef;
+  _frame_def = LEAKTESTNEW(ID3_FrameDef);
   if (NULL == _frame_def)
   {
     // log this;
@@ -82,9 +83,9 @@ size_t ID3_FrameHeader::Size() const
   {
     return 0;
   }
-  return 
-    _info->frame_bytes_id   + 
-    _info->frame_bytes_size + 
+  return
+    _info->frame_bytes_id   +
+    _info->frame_bytes_size +
     _info->frame_bytes_flags;
 }
 
@@ -132,7 +133,7 @@ bool ID3_FrameHeader::Parse(ID3_Reader& reader)
   return true;
 }
 
-void ID3_FrameHeader::Render(ID3_Writer& writer) const
+ID3_Err ID3_FrameHeader::Render(ID3_Writer& writer) const
 {
   size_t size = 0;
 
@@ -140,7 +141,7 @@ void ID3_FrameHeader::Render(ID3_Writer& writer) const
   {
     // TODO: log this
     ID3D_WARNING( "ID3_FrameHeader::Render(): _frame_def is NULL!" );
-    return;
+    return ID3E_InvalidFrameID;
     //ID3_THROW(ID3E_InvalidFrameID);
   }
   char *textID;
@@ -158,6 +159,7 @@ void ID3_FrameHeader::Render(ID3_Writer& writer) const
 
   io::writeBENumber(writer, _data_size, _info->frame_bytes_size);
   io::writeBENumber(writer, _flags.get(), _info->frame_bytes_flags);
+  return ID3E_NoError;
 }
 
 const char* ID3_FrameHeader::GetTextID() const
@@ -174,7 +176,7 @@ const char* ID3_FrameHeader::GetTextID() const
       textID = _frame_def->sLongTextID;
     }
   }
-  return textID;
+  return (const char*)textID;
 }
 
 ID3_FrameHeader& ID3_FrameHeader::operator=(const ID3_FrameHeader& hdr)
@@ -189,7 +191,7 @@ ID3_FrameHeader& ID3_FrameHeader::operator=(const ID3_FrameHeader& hdr)
     }
     else
     {
-      _frame_def = new ID3_FrameDef;
+      _frame_def = LEAKTESTNEW(ID3_FrameDef);
       if (NULL == _frame_def)
       {
         // TODO: throw something here...

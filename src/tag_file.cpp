@@ -1,4 +1,4 @@
-// $Id: tag_file.cpp,v 1.40 2002/07/31 13:45:18 t1mpy Exp $
+// $Id: tag_file.cpp,v 1.41 2002/09/13 15:37:23 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -50,7 +50,7 @@ static int truncate(const char *path, size_t length)
 {
   int result = -1;
   HANDLE fh;
-  
+
   fh = ::CreateFile(path,
                     GENERIC_WRITE | GENERIC_READ,
                     0,
@@ -58,7 +58,7 @@ static int truncate(const char *path, size_t length)
                     OPEN_EXISTING,
                     FILE_ATTRIBUTE_NORMAL,
                     NULL);
-  
+
   if(INVALID_HANDLE_VALUE != fh)
   {
     SetFilePointer(fh, length, NULL, FILE_BEGIN);
@@ -66,7 +66,7 @@ static int truncate(const char *path, size_t length)
     CloseHandle(fh);
     result = 0;
   }
-  
+
   return result;
 }
 
@@ -76,7 +76,7 @@ static int truncate(const char *path, size_t length)
 #  endif
 
 #elif defined(WINCE)
-// Createfile is apparently to defined to CreateFileW. (Bad Bad Bad), so we 
+// Createfile is apparently to defined to CreateFileW. (Bad Bad Bad), so we
 // work around it by converting path to Unicode
 #  include <windows.h>
 static int truncate(const char *path, size_t length)
@@ -100,7 +100,7 @@ static int truncate(const char *path, size_t length)
     CloseHandle(fh);
     result = 0;
   }
-  
+
   return result;
 }
 
@@ -131,7 +131,7 @@ size_t ID3_TagImpl::Link(const char *fileInfo, bool parseID3v1, bool parseLyrics
 size_t ID3_TagImpl::Link(const char *fileInfo, flags_t tag_types)
 {
   _tags_to_parse.set(tag_types);
-  
+
   if (NULL == fileInfo)
   {
     return 0;
@@ -141,7 +141,20 @@ size_t ID3_TagImpl::Link(const char *fileInfo, flags_t tag_types)
   _changed = true;
 
   this->ParseFile();
-  
+
+  return this->GetPrependedBytes();
+}
+
+// used for streaming:
+size_t ID3_TagImpl::Link(ID3_Reader &reader, flags_t tag_types)
+{
+  _tags_to_parse.set(tag_types);
+
+  _file_name = "";
+  _changed = true;
+
+  this->ParseReader(reader);
+
   return this->GetPrependedBytes();
 }
 
@@ -176,16 +189,16 @@ size_t RenderV1ToFile(ID3_TagImpl& tag, fstream& file)
     {
       file.seekp(0-ID3_V1_LEN, ios::end);
     }
-    // Otherwise, set the cursor to the end of the file so we can append on 
+    // Otherwise, set the cursor to the end of the file so we can append on
     // the new tag.
     else
     {
       file.seekp(0, ios::end);
     }
   }
-  
+
   ID3_IOStreamWriter out(file);
-  
+
   id3::v1::render(out, tag);
 
   return ID3_V1_LEN;
@@ -193,6 +206,8 @@ size_t RenderV1ToFile(ID3_TagImpl& tag, fstream& file)
 
 size_t RenderV2ToFile(const ID3_TagImpl& tag, fstream& file)
 {
+  ID3_Err err = ID3E_NoError;
+
   ID3D_NOTICE( "RenderV2ToFile: starting" );
   if (!file)
   {
@@ -200,9 +215,14 @@ size_t RenderV2ToFile(const ID3_TagImpl& tag, fstream& file)
     return 0;
   }
 
-  String tagString; 
+  String tagString;
   io::StringWriter writer(tagString);
-  id3::v2::render(writer, tag);
+  err = id3::v2::render(writer, tag);
+  if (err != ID3E_NoError)
+  {
+    return (size_t)err; //impossible size, will make caller be able to set _last_error
+  }
+
   ID3D_NOTICE( "RenderV2ToFile: rendered v2" );
 
   const char* tagData = tagString.data();
@@ -222,7 +242,7 @@ size_t RenderV2ToFile(const ID3_TagImpl& tag, fstream& file)
     if (filename.size() + sTmpSuffix.size() > ID3_PATH_LENGTH)
     {
       // log this
-      return 0;
+      return (size_t)ID3E_NoFile;
       //ID3_THROW_DESC(ID3E_NoFile, "filename too long");
     }
     char sTempFile[ID3_PATH_LENGTH];
@@ -232,7 +252,13 @@ size_t RenderV2ToFile(const ID3_TagImpl& tag, fstream& file)
 #if ((defined(__GNUC__) && __GNUC__ >= 3  ) || !defined(HAVE_MKSTEMP))
     // This section is for Windows folk && gcc 3.x folk
     fstream tmpOut;
-    createFile(sTempFile, tmpOut);
+    err = createFile(sTempFile, tmpOut);
+    if (err != ID3E_NoError)
+    {
+      tmpOut.close();
+      remove(sTempFile);
+      return (size_t)err; //impossible size, will make caller be able to set _last_error
+    }
 
     tmpOut.write(tagData, tagSize);
     file.seekg(tag.GetPrependedBytes(), ios::beg);
@@ -243,17 +269,18 @@ size_t RenderV2ToFile(const ID3_TagImpl& tag, fstream& file)
       size_t nBytes = file.gcount();
       tmpOut.write((char *)tmpBuffer, nBytes);
     }
-      
+
 #else //((defined(__GNUC__) && __GNUC__ >= 3  ) || !defined(HAVE_MKSTEMP))
 
     // else we gotta make a temp file, copy the tag into it, copy the
     // rest of the old file after the tag, delete the old file, rename
     // this new file to the old file's name and update the handle
-    
+
     int fd = mkstemp(sTempFile);
     if (fd < 0)
     {
       remove(sTempFile);
+      return (size_t)ID3E_NoFile; //impossible size, will make caller be able to set _last_error
       //ID3_THROW_DESC(ID3E_NoFile, "couldn't open temp file");
     }
 
@@ -262,7 +289,7 @@ size_t RenderV2ToFile(const ID3_TagImpl& tag, fstream& file)
     {
       tmpOut.close();
       remove(sTempFile);
-      return 0;
+      return (size_t)ID3E_ReadOnly; //impossible size, will make caller be able to set _last_error
       // log this
       //ID3_THROW(ID3E_ReadOnly);
     }
@@ -276,7 +303,7 @@ size_t RenderV2ToFile(const ID3_TagImpl& tag, fstream& file)
       size_t nBytes = file.gcount();
       tmpOut.write(tmpBuffer, nBytes);
     }
-      
+
 #endif ////((defined(__GNUC__) && __GNUC__ >= 3  ) || !defined(HAVE_MKSTEMP))
 
     tmpOut.close();
@@ -297,9 +324,12 @@ size_t RenderV2ToFile(const ID3_TagImpl& tag, fstream& file)
 #endif //defined(HAVE_SYS_STAT_H)
 
 //    file = tmpOut;
-    openWritableFile(filename, file);
+    err = openWritableFile(filename, file);
+    if (err != ID3E_NoError)
+    {
+      return (size_t)err; //impossible size, will make caller be able to set _last_error
+    }
   }
-
   return tagSize;
 }
 
@@ -307,31 +337,45 @@ size_t RenderV2ToFile(const ID3_TagImpl& tag, fstream& file)
 flags_t ID3_TagImpl::Update(flags_t ulTagFlag)
 {
   flags_t tags = ID3TT_NONE;
-  
+
   fstream file;
   String filename = this->GetFileName();
-  ID3_Err err = openWritableFile(filename, file);
+  _last_error = openWritableFile(filename, file);
   _file_size = getFileSize(file);
-  
-  if (err == ID3E_NoFile)
+
+  if (_last_error == ID3E_NoFile)
   {
-    err = createFile(filename, file);
+    _last_error = createFile(filename, file);
   }
-  if (err == ID3E_ReadOnly)
+  if (_last_error == ID3E_ReadOnly)
   {
     return tags;
   }
 
   if ((ulTagFlag & ID3TT_ID3V2) && this->HasChanged())
   {
+    ID3_V2Spec spec2use;
+    if (this->UserUpdatedSpec) // if the spec is too old, upgrade anyway. And never use experimental ones
+      spec2use = this->GetSpec() < ID3V2_3_0 ? ID3V2_LATEST : this->GetSpec();
+    else
+      spec2use = ID3V2_LATEST; //write ID3V2_LATEST as default
+
+    this->SetSpec(spec2use);
+    this->checkFrames();
     _prepended_bytes = RenderV2ToFile(*this, file);
+    if (_prepended_bytes < 17) //17 = minimal tag size, errors should not be higher numbered than 16
+    {
+      //must be an error
+      _last_error = (ID3_Err)_prepended_bytes;
+      _prepended_bytes = 0;
+    }
     if (_prepended_bytes)
     {
       tags |= ID3TT_ID3V2;
     }
   }
-  
-  if ((ulTagFlag & ID3TT_ID3V1) && 
+
+  if ((ulTagFlag & ID3TT_ID3V1) &&
       (!this->HasTagType(ID3TT_ID3V1) || this->HasChanged()))
   {
     size_t tag_bytes = RenderV1ToFile(*this, file);
@@ -356,12 +400,13 @@ flags_t ID3_TagImpl::Strip(flags_t ulTagFlag)
 {
   flags_t ulTags = ID3TT_NONE;
   const size_t data_size = ID3_GetDataSize(*this);
-  
+
   // First remove the v2 tag, if requested
   if (ulTagFlag & ID3TT_PREPENDED & _file_tags.get())
   {
     fstream file;
-    if (ID3E_NoError != openWritableFile(this->GetFileName(), file))
+    _last_error = openWritableFile(this->GetFileName(), file);
+    if (ID3E_NoError != _last_error)
     {
       return ulTags;
     }
@@ -372,9 +417,9 @@ flags_t ID3_TagImpl::Strip(flags_t ulTagFlag)
     // tag back n bytes, where n is the size of the id3v2 tag.  Once we've
     // copied the data, we'll truncate the file.
     file.seekg(this->GetPrependedBytes(), ios::beg);
-    
+
     uchar aucBuffer[BUFSIZ];
-    
+
     // The nBytesRemaining variable indicates how many bytes are to be copied
     size_t nBytesToCopy = data_size;
 
@@ -384,12 +429,12 @@ flags_t ID3_TagImpl::Strip(flags_t ulTagFlag)
     {
       nBytesToCopy += this->GetAppendedBytes();
     }
-    
-    // The nBytesRemaining variable indicates how many bytes are left to be 
+
+    // The nBytesRemaining variable indicates how many bytes are left to be
     // moved in the actual file.
     // The nBytesCopied variable keeps track of how many actual bytes were
     // copied (or moved) so far.
-    size_t 
+    size_t
       nBytesRemaining = nBytesToCopy,
       nBytesCopied = 0;
     while (!file.eof())
@@ -416,7 +461,7 @@ flags_t ID3_TagImpl::Strip(flags_t ulTagFlag)
         file.seekg(this->GetPrependedBytes(), ios::cur);
         nBytesCopied += nBytesRead;
       }
-      
+
       if (nBytesCopied == nBytesToCopy || nBytesToRead < BUFSIZ)
       {
         break;
@@ -424,7 +469,7 @@ flags_t ID3_TagImpl::Strip(flags_t ulTagFlag)
     }
     file.close();
   }
-  
+
   size_t nNewFileSize = data_size;
 
   if ((_file_tags.get() & ID3TT_APPENDED) && (ulTagFlag & ID3TT_APPENDED))
@@ -437,7 +482,7 @@ flags_t ID3_TagImpl::Strip(flags_t ulTagFlag)
     // size by those bytes
     nNewFileSize += this->GetAppendedBytes();
   }
-  
+
   if ((ulTagFlag & ID3TT_PREPENDED) && (_file_tags.get() & ID3TT_PREPENDED))
   {
     // If we're stripping the ID3v2 tag, there's no need to adjust the new
@@ -455,16 +500,16 @@ flags_t ID3_TagImpl::Strip(flags_t ulTagFlag)
   if (ulTags && (truncate(_file_name.c_str(), nNewFileSize) == -1))
   {
     // log this
+    _last_error = ID3E_NoFile;
     return 0;
-    //ID3_THROW(ID3E_NoFile);
   }
 
   _prepended_bytes = (ulTags & ID3TT_PREPENDED) ? 0 : _prepended_bytes;
   _appended_bytes  = (ulTags & ID3TT_APPENDED)  ? 0 : _appended_bytes;
   _file_size = data_size + _prepended_bytes + _appended_bytes;
-  
+
   _changed = _file_tags.remove(ulTags) || _changed;
-  
+
   return ulTags;
 }
 
