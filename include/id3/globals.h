@@ -1,5 +1,5 @@
 // -*- C++ -*-
-/* $Id: globals.h,v 1.54 2003/02/21 04:20:39 slackorama Exp $
+/* $Id: globals.h,v 1.55 2003/05/22 08:23:18 t1mpy Exp $
 
  * id3lib: a C++ library for creating and manipulating id3v1/v2 tags
  * Copyright 1999, 2000 Scott Thomas Haug
@@ -630,7 +630,7 @@ static const char* ID3_v1_genre_description[ID3_NR_OF_V1_GENRES] =
   "Christian Rock ",       //141
   "Merengue",              //142
   "Salsa",                 //143
-  "Trash Metal",           //144
+  "Thrash Metal",          //144
   "Anime",                 //145
   "JPop",                  //146
   "Synthpop"               //147
