@@ -1,4 +1,4 @@
-// $Id: utils.cpp,v 1.30 2003/01/04 17:11:53 cmumford Exp $
+// $Id: utils.cpp,v 1.31 2003/01/04 20:23:10 cmumford Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -166,11 +166,13 @@ String msconvert(String data, ID3_TextEnc sourceEnc, ID3_TextEnc targetEnc)
   if ( hResult != S_OK )
   {
     CoUninitialize();
+	delete dst;
     return oldconvert(data, sourceEnc, targetEnc);
   }
 
   CoUninitialize();
   target = (char*)dst;
+  delete dst;
   return target;
 }
 #endif //defined(HAVE_MS_CONVERT)
