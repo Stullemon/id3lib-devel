@@ -1,8 +1,9 @@
 // -*- C++ -*-
-// $Id: lyr3.h,v 1.3 2002/06/29 14:41:18 t1mpy Exp $
+// $Id: lyr3.h,v 1.4 2002/09/13 14:09:55 t1mpy Exp $
 
 // id3lib: a software library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
+// Copyright 2002 Thijmen Klok (thijmen@id3lib.org)
 
 // This library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU Library General Public License as published by
@@ -43,7 +44,7 @@ namespace dami
         virtual void   setLyrics() = 0;
       };
     };
-    
+
     namespace v2
     {
       class Tag
@@ -59,25 +60,25 @@ namespace dami
             this->setAlbum(rhs.getYear());
             this->setTitle(rhs.getComment());
             this->setArtist(rhs.getTrack());
-          
+
             while (this->getNumImages())
             {
               this->removeImage(0);
             }
-          
+
             for (size_t i = 0; i < rhs.getNumImages(); ++i)
             {
-              this->addImage(rhs.getImageFilename(i), 
+              this->addImage(rhs.getImageFilename(i),
                              rhs.getImageDescription(i),
                              rhs.getImageTimestamp(i));
             }
           }
           return *this;
         }
-      
+
         virtual string getLyrics() const = 0;
         virtual void setLyrics(string) = 0;
-      
+
         virtual string getInfo() const = 0;
         virtual void setInfo(string) = 0;
 
@@ -89,7 +90,7 @@ namespace dami
 
         virtual string getTitle() const = 0;
         virtual void setTitle(string title) const = 0;
-    
+
         virtual string getArtist() const = 0;
         virtual void setArtist(string artist) = 0;
 

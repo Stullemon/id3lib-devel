@@ -1,8 +1,9 @@
 // -*- C++ -*-
-// $Id: lyr3_impl.h,v 1.3 2002/06/29 14:41:31 t1mpy Exp $
+// $Id: lyr3_impl.h,v 1.4 2002/09/13 14:09:55 t1mpy Exp $
 
 // id3lib: a software library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
+// Copyright 2002 Thijmen Klok (thijmen@id3lib.org)
 
 // This library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU Library General Public License as published by
@@ -45,7 +46,7 @@ namespace dami
         void   setLyrics(string lyrics) { lyrics = _lyrics; }
       };
     };
-  
+
     namespace v2
     {
       class TagImpl : public Tag
@@ -103,7 +104,7 @@ namespace dami
        public:
         TagImpl() { ; }
 
-        TagImpl(Tag& rhs) 
+        TagImpl(Tag& rhs)
         {
           *this = rhs;
         }
@@ -119,29 +120,29 @@ namespace dami
 
         string getAlbum() const { return _album; }
         void setAlbum(string album) { _album = album; }
-    
+
         string getTitle() const { return _title; }
         void setTitle(string title) { _title = title; }
-    
+
         string getArtist() const { return _artist; }
         void setArtist(string artist) { _artist = artist; }
 
         size_t getNumImages() const { return _images.size(); }
-        void addImage(string filename, string desc, string ts) 
-        { 
-          Image img(filename, desc, ts); 
-          _images.push_back(img); 
+        void addImage(string filename, string desc, string ts)
+        {
+          Image img(filename, desc, ts);
+          _images.push_back(img);
         }
         string getImageFilename(size_t i) const
-        { 
+        {
           return (i < this->getNumImages()) ? this->getImage(i)->_name : "";
         }
         string getImageDescription(size_t i) const
-        { 
+        {
           return (i < this->getNumImages()) ? this->getImage(i)->_desc : "";
         }
         string getImageTimestamp(size_t i) const
-        { 
+        {
           return (i < this->getNumImages()) ? this->getImage(i)->_ts : "";
         }
         bool removeImage(size_t i)

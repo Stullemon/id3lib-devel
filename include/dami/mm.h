@@ -1,8 +1,9 @@
 // -*- C++ -*-
-// $Id: mm.h,v 1.2 2002/06/27 12:48:58 t1mpy Exp $
+// $Id: mm.h,v 1.3 2002/09/13 14:09:55 t1mpy Exp $
 
 // id3lib: a software library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
+// Copyright 2002 Thijmen Klok (thijmen@id3lib.org)
 
 // This library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU Library General Public License as published by
@@ -37,7 +38,7 @@ namespace dami
     class Tag
     {
      public:
-      
+
       Tag& operator=(const Tag& rhs)
       {
         if (this != &rhs)
@@ -75,7 +76,7 @@ namespace dami
 
       virtual string getTitle() const = 0;
       virtual void setTitle(string) = 0;
-    
+
       virtual string getAlbum() const = 0;
       virtual void setAlbum(string) = 0;
 
@@ -115,22 +116,22 @@ namespace dami
 
       virtual unsigned short getTrack() const = 0;
       virtual void setTrack(unsigned short track) = 0;
-    
+
       virtual string getNotes() const = 0;
       virtual void setNotes(string) = 0;
-    
+
       virtual string getArtistBio() const = 0;
       virtual void setArtistBio(string) = 0;
-    
+
       virtual string getLyrics() const = 0;
       virtual void setLyrics(string) = 0;
-    
+
       virtual string getArtistURL() const = 0;
       virtual void setArtistURL(string) = 0;
-    
+
       virtual string getBuyURL() const = 0;
       virtual void setBuyURL(string) = 0;
-    
+
       virtual string getEmail() const = 0;
       virtual void setEmail(string) = 0;
     };

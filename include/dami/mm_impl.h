@@ -1,8 +1,9 @@
 // -*- C++ -*-
-// $Id: mm_impl.h,v 1.1 2000/10/23 06:09:39 eldamitri Exp $
+// $Id: mm_impl.h,v 1.2 2002/09/13 14:09:55 t1mpy Exp $
 
 // id3lib: a software library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
+// Copyright 2002 Thijmen Klok (thijmen@id3lib.org)
 
 // This library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU Library General Public License as published by
@@ -59,7 +60,7 @@ namespace dami
       string         _buyURL;
       string         _email;
      public:
-      
+
       virtual string getImageType() const { return _imageType; }
       virtual void setImageType(string imageType) { _imageType = imageType; }
 
@@ -68,7 +69,7 @@ namespace dami
 
       virtual string getTitle() const { return _title; }
       virtual void setTitle(string title) { _title = title; }
-    
+
       virtual string getAlbum() const { return _album; }
       virtual void setAlbum(string album) { _album = album; }
 
@@ -108,22 +109,22 @@ namespace dami
 
       virtual unsigned short getTrack() const { return _track; }
       virtual void setTrack(unsigned short track track) { _track = track; }
-    
+
       virtual string getNotes() const { return _Notes; }
       virtual void setNotes(string Notes) { _Notes = Notes; }
-    
+
       virtual string getArtistBio() const { return _artistBio; }
       virtual void setArtistBio(string artistBio) { _artistBio = artistBio; }
-    
+
       virtual string getLyrics() const { return _lyrics; }
       virtual void setLyrics(string lyrics) { _lyrics = lyrics; }
-    
+
       virtual string getArtistURL() const { return _artistURL; }
       virtual void setArtistURL(string artistURL) { _artistURL = artistURL; }
-    
+
       virtual string getBuyURL() const { return _buyURL; }
       virtual void setBuyURL(string buyURL) { _buyURL = buyURL; }
-    
+
       virtual string getEmail() const { return _email; }
       virtual void setEmail(string email) { _email = email; }
     };
