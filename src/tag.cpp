@@ -1,4 +1,4 @@
-// $Id: tag.cpp,v 1.54 2002/09/21 17:20:40 t1mpy Exp $
+// $Id: tag.cpp,v 1.55 2002/10/04 09:56:04 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -271,7 +271,7 @@ using namespace dami;
  ** formatted 'CDM' frames from the unreleased ID3v2 2.01 draft specification.
  **
  ** \author Dirk Mahoney
- ** \version $Id: tag.cpp,v 1.54 2002/09/21 17:20:40 t1mpy Exp $
+ ** \version $Id: tag.cpp,v 1.55 2002/10/04 09:56:04 t1mpy Exp $
  ** \sa ID3_Frame
  ** \sa ID3_Field
  ** \sa ID3_Err
@@ -286,8 +286,8 @@ using namespace dami;
  **
  ** \param name The filename of the mp3 file to link to
  **/
-ID3_Tag::ID3_Tag(const char *name)
-  : _impl(new ID3_TagImpl(name))
+ID3_Tag::ID3_Tag(const char *name, flags_t flags)
+  : _impl(new ID3_TagImpl(name, flags))
 {
 }
 

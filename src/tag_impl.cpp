@@ -1,4 +1,4 @@
-// $Id: tag_impl.cpp,v 1.14 2002/09/21 17:20:39 t1mpy Exp $
+// $Id: tag_impl.cpp,v 1.15 2002/10/04 09:56:03 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -147,7 +147,7 @@ size_t ID3_TagImpl::IsV2Tag(ID3_Reader& reader)
   return tagSize;
 }
 
-ID3_TagImpl::ID3_TagImpl(const char *name)
+ID3_TagImpl::ID3_TagImpl(const char *name, flags_t flags)
   : _frames(),
     _cursor(_frames.begin()),
     _file_name(),
@@ -165,7 +165,7 @@ ID3_TagImpl::ID3_TagImpl(const char *name)
   this->Clear();
   if (name)
   {
-    this->Link(name);
+    this->Link(name, flags);
   }
 }
 

@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: tag_impl.h,v 1.10 2002/09/21 17:20:39 t1mpy Exp $
+// $Id: tag_impl.h,v 1.11 2002/10/04 09:56:04 t1mpy Exp $
 
 // id3lib: a software library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -87,7 +87,7 @@ public:
   typedef Frames::iterator       iterator;
   typedef Frames::const_iterator const_iterator;
 public:
-  ID3_TagImpl(const char *name = NULL);
+  ID3_TagImpl(const char *name = NULL, flags_t = (flags_t) ID3TT_ALL);
   ID3_TagImpl(const ID3_Tag &tag);
   virtual ~ID3_TagImpl();
 
