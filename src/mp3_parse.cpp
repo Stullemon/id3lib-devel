@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: mp3_parse.cpp,v 1.5 2002/07/31 12:47:42 t1mpy Exp $
+// $Id: mp3_parse.cpp,v 1.6 2002/09/13 15:40:04 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 2002, Thijmen Klok (thijmen@id3lib.org)
@@ -80,24 +80,24 @@ using namespace dami;
 
 bool Mp3Info::Parse(ID3_Reader& reader, size_t mp3size)
 {
-  MP3_BitRates _mp3_bitrates[2][3][16] = 
+  MP3_BitRates _mp3_bitrates[2][3][16] =
   {
     {
       { //MPEG 1, LAYER I
-        MP3BITRATE_NONE, 
+        MP3BITRATE_NONE,
         MP3BITRATE_32K,
         MP3BITRATE_64K,
         MP3BITRATE_96K,
         MP3BITRATE_128K,
-        MP3BITRATE_160K, 
-        MP3BITRATE_192K, 
-        MP3BITRATE_224K, 
-        MP3BITRATE_256K, 
-        MP3BITRATE_288K, 
-        MP3BITRATE_320K, 
-        MP3BITRATE_352K, 
-        MP3BITRATE_384K, 
-        MP3BITRATE_416K, 
+        MP3BITRATE_160K,
+        MP3BITRATE_192K,
+        MP3BITRATE_224K,
+        MP3BITRATE_256K,
+        MP3BITRATE_288K,
+        MP3BITRATE_320K,
+        MP3BITRATE_352K,
+        MP3BITRATE_384K,
+        MP3BITRATE_416K,
         MP3BITRATE_448K,
         MP3BITRATE_FALSE
       },
@@ -149,12 +149,12 @@ bool Mp3Info::Parse(ID3_Reader& reader, size_t mp3size)
         MP3BITRATE_96K,
         MP3BITRATE_112K,
         MP3BITRATE_128K,
-        MP3BITRATE_144K, 
-        MP3BITRATE_160K, 
-        MP3BITRATE_176K, 
-        MP3BITRATE_192K, 
-        MP3BITRATE_224K, 
-        MP3BITRATE_256K, 
+        MP3BITRATE_144K,
+        MP3BITRATE_160K,
+        MP3BITRATE_176K,
+        MP3BITRATE_192K,
+        MP3BITRATE_224K,
+        MP3BITRATE_256K,
         MP3BITRATE_FALSE
       },
       { //MPEG 2 or 2.5, LAYER II
@@ -204,7 +204,7 @@ bool Mp3Info::Parse(ID3_Reader& reader, size_t mp3size)
     { MP3FREQUENCIES_44100HZ, MP3FREQUENCIES_48000HZ, MP3FREQUENCIES_32000HZ, MP3FREQUENCIES_Reserved }  //MPEGVERSION_1
   };
 
-  _mp3_header_internal *_tmpheader;
+  _mp3_header_internal *_tmpheader = NULL;
 
   const size_t HEADERSIZE = 4;//
   char buf[HEADERSIZE+1]; //+1 to hold the \0 char
@@ -231,6 +231,7 @@ bool Mp3Info::Parse(ID3_Reader& reader, size_t mp3size)
 
   if (((buf[0] & 0xFF) != 0xFF) || ((buf[1] & 0xE0) != 0xE0)) //first 11 bits should be 1
   {
+    // seek until the first 0xFF has been done in Parse()
     this->Clean();
     return false;
   }
@@ -251,7 +252,6 @@ bool Mp3Info::Parse(ID3_Reader& reader, size_t mp3size)
     case 1:
       this->Clean();
       return false; //wouldn't know how to handle it
-      break;
     case 0:
       _mp3_header_output->version = MPEGVERSION_2_5;
       bitrate_index = 1;
@@ -259,7 +259,6 @@ bool Mp3Info::Parse(ID3_Reader& reader, size_t mp3size)
     default:
       this->Clean();
       return false;
-      break;
   };
 
   switch (_tmpheader->layer)
@@ -276,11 +275,9 @@ bool Mp3Info::Parse(ID3_Reader& reader, size_t mp3size)
     case 0:
       this->Clean();
       return false; //wouldn't know how to handle it
-      break;
     default:
       this->Clean();
       return false; //how can two unsigned bits be something else??
-      break;
   };
 
   // mpegversion, layer and bitrate are all valid
@@ -319,7 +316,6 @@ bool Mp3Info::Parse(ID3_Reader& reader, size_t mp3size)
   default:
     this->Clean();
     return false; //wouldn't know how to handle it
-    break;
   }
 
   if (_mp3_header_output->channelmode == MP3CHANNELMODE_JOINT_STEREO)
@@ -342,7 +338,6 @@ bool Mp3Info::Parse(ID3_Reader& reader, size_t mp3size)
     default:
       this->Clean();
       return false; //wouldn't know how to handle it
-      break;
     }
   }
   else //it's valid to have a valid false one in this case, since it's only used with joint stereo
@@ -365,7 +360,6 @@ bool Mp3Info::Parse(ID3_Reader& reader, size_t mp3size)
   default:
     this->Clean();
     return false; //wouldn't know how to handle it
-    break;
   }
 
 //http://www.mp3-tech.org/programmer/frame_header.html
@@ -430,6 +424,7 @@ bool Mp3Info::Parse(ID3_Reader& reader, size_t mp3size)
     _mp3_header_output->time = 0;
   }
   //if we got to here it's okay
+  _mp3_header_output->datasize = reader.getEnd() - reader.getBeg();
   return true;
 }
 
