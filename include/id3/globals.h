@@ -1,5 +1,5 @@
 // -*- C++ -*-
-/* $Id: globals.h,v 1.53 2002/09/13 14:24:23 t1mpy Exp $
+/* $Id: globals.h,v 1.54 2003/02/21 04:20:39 slackorama Exp $
 
  * id3lib: a C++ library for creating and manipulating id3v1/v2 tags
  * Copyright 1999, 2000 Scott Thomas Haug
@@ -483,7 +483,7 @@ ID3_ENUM(ID3_TimeStampFormat)
 
 #define ID3_NR_OF_V1_GENRES 148
 
-static char* ID3_v1_genre_description[ID3_NR_OF_V1_GENRES] =
+static const char* ID3_v1_genre_description[ID3_NR_OF_V1_GENRES] =
 {
   "Blues",             //0
   "Classic Rock",      //1

@@ -1,4 +1,4 @@
-// $Id: misc_support.cpp,v 1.43 2003/01/05 18:02:54 cmumford Exp $
+// $Id: misc_support.cpp,v 1.44 2003/02/21 04:20:38 slackorama Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -993,8 +993,8 @@ ID3_Frame* ID3_AddGenre(ID3_Tag* tag, size_t genreNum, char* genre, bool add_v1_
   bool writeRX = false;
   bool writeCR = false;
   char* tmpgenre1 = LEAKTESTNEW(char[1024]);// = NULL;
-  char* tmpgenre = NULL;
-  char* remainder = NULL;
+  const char* tmpgenre = NULL;
+  const char* remainder = NULL;
   dami::String* newgenre = LEAKTESTNEW(dami::String);
   int iCompare;
 
