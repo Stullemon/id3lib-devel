@@ -1,4 +1,4 @@
-// $Id: tag.cpp,v 1.55 2002/10/04 09:56:04 t1mpy Exp $
+// $Id: tag.cpp,v 1.56 2004/01/16 01:53:55 shadrack Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -54,6 +54,12 @@ using namespace dami;
  ** There are other files that must be included to access more advanced
  ** functionality, but this will do most of the core functionality.
  **
+ ** In straight C the \c #include is slightly different:
+ **
+ ** \code
+ **   #include <id3.h>
+ ** \endcode
+ **
  ** \subsection creation Creating a tag
  **
  ** Almost all functionality occurs via an ID3_Tag object.  An ID3_Tag object
@@ -76,6 +82,14 @@ using namespace dami;
  **   myTag.Link("song.mp3");
  ** \endcode
  **
+ ** This is similar to the interface in straight C, where the tag creation and
+ ** tag link must be done separately:
+ **
+ ** \code
+ **   ID3Tag *myTag = ID3Tag_New();
+ **   ID3Tag_Link(myTag, "song.mp3");
+ ** \endcode
+ **
  ** The default behavior of Link() is to parse all possible tagging information
  ** and convert it into ID3v2 frames.  The tagging information parsed can be
  ** limited to a particular type (or types) of tag by passing an ID3_TagType
@@ -86,11 +100,18 @@ using namespace dami;
  **   myTag.Link("song.mp3", ID3TT_ID3V1);
  ** \endcode
  **
- ** Another example would be to read in all tags that could possibly appear at
- ** the end of the file.
+ ** The C equivalent is this:
  **
  ** \code
- **   myTag.Link("song.mp3", ID3TT_ID3V1 | ID3TT_LYRICS3V2 | ID3TT_MUSICMATCH);
+ **   ID3Tag_LinkWithFlags(myTag, "song.mp3", ID3TT_ID3V1);
+ ** \endcode
+ **
+ ** Another example would be to read in all tags that could possibly appear at
+ ** the end of the file.  Here are the C++ and C examples:
+ **
+ ** \code
+ **   myTag.Link("song.mp3", ID3TT_ID3V1 | ID3TT_LYRICS3V2 | ID3TT_MUSICMATCH); // C++
+ **   ID3Tag_LinkWithFlags(myTag, "song.mp3", ID3TT_ID3V1 | ID3TT_LYRICS3V2 | ID3TT_MUSICMATCH); // C
  ** \endcode
  **
  ** \section accessing Accessing the Tag Data
@@ -271,7 +292,7 @@ using namespace dami;
  ** formatted 'CDM' frames from the unreleased ID3v2 2.01 draft specification.
  **
  ** \author Dirk Mahoney
- ** \version $Id: tag.cpp,v 1.55 2002/10/04 09:56:04 t1mpy Exp $
+ ** \version $Id: tag.cpp,v 1.56 2004/01/16 01:53:55 shadrack Exp $
  ** \sa ID3_Frame
  ** \sa ID3_Field
  ** \sa ID3_Err

@@ -1,4 +1,4 @@
-// $Id: field.cpp,v 1.48 2002/09/19 09:54:11 t1mpy Exp $
+// $Id: field.cpp,v 1.49 2004/01/16 01:53:55 shadrack Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -1470,7 +1470,7 @@ static  ID3_FrameDef ID3_FrameDefs[] =
  ** if you only plan to generate 3.0 tags.
  **
  ** @author Dirk Mahoney
- ** @version $Id: field.cpp,v 1.48 2002/09/19 09:54:11 t1mpy Exp $
+ ** @version $Id: field.cpp,v 1.49 2004/01/16 01:53:55 shadrack Exp $
  ** \sa ID3_Tag
  ** \sa ID3_Frame
  ** \sa ID3_Err
@@ -1816,7 +1816,7 @@ bool ID3_FieldImpl::SetEncoding(ID3_TextEnc enc)
  **
  ** void ShowKnownFrameInfo {
  **   ID3_FrameInfo myFrameInfo;
- **   for (int cur = ID3FID_NOFRAME+1; cur <= myFrameInfo.MaxFrameID(); cur ++)
+ **   for (uint32 cur = ID3FID_NOFRAME+1; cur <= myFrameInfo.MaxFrameID(); cur ++)
  **   {
  **     cout << "Short ID: " << myFrameInfo.ShortName(ID3_FrameID(cur)) <<
  **     " Long ID: " << myFrameInfo.LongName(ID3_FrameID(cur)) <<
@@ -1833,13 +1833,13 @@ bool ID3_FieldImpl::SetEncoding(ID3_TextEnc enc)
  ** does it take on any meaningful significance.
  **
  ** \code
- **  for (int cur = ID3FID_NOFRAME+1; cur <= fi.MaxFrameID(); cur ++)
+ **  for (uint32 cur = ID3FID_NOFRAME+1; cur <= fi.MaxFrameID(); cur ++)
  **  {
- **    int numfields = fi.NumFields(ID3_FrameID(cur));
+ **    uint32 numfields = fi.NumFields(ID3_FrameID(cur));
  **
  **    cout << "ID: " << fi.LongName(ID3_FrameID(cur)) <<
  **    " FIELDS: " << numfields << endl;
- **    for(int i=0;i<numfields;i++) {
+ **    for(uint32 i=0;i<numfields;i++) {
  **      cout << "TYPE: " << fi.FieldType(ID3_FrameID(cur),i) <<
  **      " SIZE: " << fi.FieldSize(ID3_FrameID(cur),i) <<
  **      " FLAGS: " << fi.FieldFlags(ID3_FrameID(cur),i) << endl;
@@ -1852,13 +1852,13 @@ bool ID3_FieldImpl::SetEncoding(ID3_TextEnc enc)
  ** \endcode
  **
  ** @author Cedric Tefft
- ** @version $Id: field.cpp,v 1.48 2002/09/19 09:54:11 t1mpy Exp $
+ ** @version $Id: field.cpp,v 1.49 2004/01/16 01:53:55 shadrack Exp $
  **/
 
 
 char *ID3_FrameInfo::ShortName(ID3_FrameID frameid)
 {
-  if(frameid < ID3FID_LASTFRAMEID)
+  if(frameid > ID3FID_NOFRAME && frameid < ID3FID_LASTFRAMEID)
     return ID3_FrameDefs[frameid-1].sShortTextID;
   else
     return NULL;
@@ -1866,7 +1866,7 @@ char *ID3_FrameInfo::ShortName(ID3_FrameID frameid)
 
 char *ID3_FrameInfo::LongName(ID3_FrameID frameid)
 {
-  if(frameid < ID3FID_LASTFRAMEID)
+  if(frameid > ID3FID_NOFRAME && frameid < ID3FID_LASTFRAMEID)
     return ID3_FrameDefs[frameid-1].sLongTextID;
   else
     return NULL;
@@ -1874,40 +1874,63 @@ char *ID3_FrameInfo::LongName(ID3_FrameID frameid)
 
 const char *ID3_FrameInfo::Description(ID3_FrameID frameid)
 {
-  if(frameid < ID3FID_LASTFRAMEID)
+  if(frameid > ID3FID_NOFRAME && frameid < ID3FID_LASTFRAMEID)
     return ID3_FrameDefs[frameid-1].sDescription;
   else
     return NULL;
 }
 
-int ID3_FrameInfo::MaxFrameID()
+uint32 ID3_FrameInfo::MaxFrameID()
 {
   return ID3FID_LASTFRAMEID-1;
 }
 
-int ID3_FrameInfo::NumFields(ID3_FrameID frameid)
+uint32 ID3_FrameInfo::NumFields(ID3_FrameID frameid)
 {
-  int fieldnum=0;
+  uint32 fieldnum=0;
 
-  while (ID3_FrameDefs[frameid-1].aeFieldDefs[fieldnum]._id != ID3FN_NOFIELD)
-  {
-    fieldnum++;
-  }
+  if(frameid > ID3FID_NOFRAME && frameid < ID3FID_LASTFRAMEID)
+	while (ID3_FrameDefs[frameid-1].aeFieldDefs[fieldnum]._id != ID3FN_NOFIELD)
+	{
+		fieldnum++;
+	}
+
   return fieldnum;
 }
 
-ID3_FieldType ID3_FrameInfo::FieldType(ID3_FrameID frameid, int fieldnum)
+ID3_FieldID ID3_FrameInfo::FieldID(ID3_FrameID frameid, uint32 fieldnum)
 {
-  return (ID3_FrameDefs[frameid-1].aeFieldDefs[fieldnum]._type);
+  if(frameid > ID3FID_NOFRAME && frameid < ID3FID_LASTFRAMEID &&
+     fieldnum < NumFields(frameid))
+  	return (ID3_FrameDefs[frameid-1].aeFieldDefs[fieldnum]._id);
+
+  return ID3FN_NOFIELD;
 }
 
-size_t ID3_FrameInfo::FieldSize(ID3_FrameID frameid, int fieldnum)
+ID3_FieldType ID3_FrameInfo::FieldType(ID3_FrameID frameid, uint32 fieldnum)
 {
-  return (ID3_FrameDefs[frameid-1].aeFieldDefs[fieldnum]._fixed_size);
+  if(frameid > ID3FID_NOFRAME && frameid < ID3FID_LASTFRAMEID &&
+     fieldnum < NumFields(frameid))
+  	return (ID3_FrameDefs[frameid-1].aeFieldDefs[fieldnum]._type);
+
+  return ID3FTY_NONE;
 }
 
-flags_t ID3_FrameInfo::FieldFlags(ID3_FrameID frameid, int fieldnum)
+size_t ID3_FrameInfo::FieldSize(ID3_FrameID frameid, uint32 fieldnum)
 {
-  return (ID3_FrameDefs[frameid-1].aeFieldDefs[fieldnum]._flags);
+  if(frameid > ID3FID_NOFRAME && frameid < ID3FID_LASTFRAMEID &&
+     fieldnum < NumFields(frameid))
+  	return (ID3_FrameDefs[frameid-1].aeFieldDefs[fieldnum]._fixed_size);
+
+  return 0;
+}
+
+flags_t ID3_FrameInfo::FieldFlags(ID3_FrameID frameid, uint32 fieldnum)
+{
+  if(frameid > ID3FID_NOFRAME && frameid < ID3FID_LASTFRAMEID &&
+     fieldnum < NumFields(frameid))
+  	return (ID3_FrameDefs[frameid-1].aeFieldDefs[fieldnum]._flags);
+
+  return ID3FF_NONE;
 }
 

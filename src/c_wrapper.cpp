@@ -1,4 +1,4 @@
-// $Id: c_wrapper.cpp,v 1.23 2002/09/21 17:20:40 t1mpy Exp $
+// $Id: c_wrapper.cpp,v 1.24 2004/01/16 01:53:55 shadrack Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -655,6 +655,73 @@ extern "C"
       ID3_CATCH(reinterpret_cast<const ID3_Field *>(field)->ToFile(fileName));
     }
   }
+
+  // field-info wrappers
+
+  ID3_C_EXPORT char * CCONV
+  ID3FrameInfo_ShortName(ID3_FrameID frameid)
+  {
+      ID3_FrameInfo myFrameInfo;
+      return myFrameInfo.ShortName(frameid);
+  }
+
+  ID3_C_EXPORT char * CCONV
+  ID3FrameInfo_LongName(ID3_FrameID frameid)
+  {
+      ID3_FrameInfo myFrameInfo;
+      return myFrameInfo.LongName(frameid);
+  }
+
+  ID3_C_EXPORT const char * CCONV
+  ID3FrameInfo_Description(ID3_FrameID frameid)
+  {
+      ID3_FrameInfo myFrameInfo;
+      return myFrameInfo.Description(frameid);
+  }
+
+  ID3_C_EXPORT uint32 CCONV
+  ID3FrameInfo_MaxFrameID()
+  {
+      ID3_FrameInfo myFrameInfo;
+      return myFrameInfo.MaxFrameID();
+  }
+
+  ID3_C_EXPORT uint32 CCONV
+  ID3FrameInfo_NumFields(ID3_FrameID frameid)
+  {
+      ID3_FrameInfo myFrameInfo;
+      return myFrameInfo.NumFields(frameid);
+  }
+
+  ID3_C_EXPORT ID3_FieldID CCONV
+  ID3FrameInfo_FieldID(ID3_FrameID frameid, uint32 fieldnum)
+  {
+      ID3_FrameInfo myFrameInfo;
+      return myFrameInfo.FieldID(frameid,fieldnum);
+  }
+
+  ID3_C_EXPORT ID3_FieldType CCONV
+  ID3FrameInfo_FieldType(ID3_FrameID frameid, uint32 fieldnum)
+  {
+      ID3_FrameInfo myFrameInfo;
+      return myFrameInfo.FieldType(frameid,fieldnum);
+  }
+
+  ID3_C_EXPORT size_t CCONV
+  ID3FrameInfo_FieldSize(ID3_FrameID frameid, uint32 fieldnum)
+  {
+      ID3_FrameInfo myFrameInfo;
+      return myFrameInfo.FieldSize(frameid,fieldnum);
+  }
+
+  ID3_C_EXPORT flags_t CCONV
+  ID3FrameInfo_FieldFlags(ID3_FrameID frameid, uint32 fieldnum)
+  {
+      ID3_FrameInfo myFrameInfo;
+      return myFrameInfo.FieldFlags(frameid,fieldnum);
+  }
+
+
 
 #ifdef __cplusplus
 }
