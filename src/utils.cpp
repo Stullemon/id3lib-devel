@@ -1,7 +1,8 @@
-// $Id: utils.cpp,v 1.26 2002/07/02 22:04:36 t1mpy Exp $
+// $Id: utils.cpp,v 1.27 2002/08/13 10:39:58 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
+// Copyright 2002 Thijmen Klok (thijmen@id3lib.org)
 
 // This library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU Library General Public License as published by
@@ -27,31 +28,38 @@
 #include <ctype.h>
 
 #if (defined(__GNUC__) && __GNUC__ == 2)
-#define NOCREATE ios::nocreate
+#  define NOCREATE ios::nocreate
 #else
-#if defined(macintosh)  //not sure if this is still needed
-#define toascii(X) (X)  //not sure if this is still needed
-#endif                  //not sure if this is still needed
-#define NOCREATE ((std::ios_base::openmode)0)
+#  if defined(macintosh)  //not sure if this is still needed
+#    define toascii(X) (X)  //not sure if this is still needed
+#  endif                  //not sure if this is still needed
+#  define NOCREATE ((std::ios_base::openmode)0)
 #endif
 
 #include "id3/utils.h" // has <config.h> "id3/id3lib_streams.h" "id3/globals.h" "id3/id3lib_strings.h"
 
 #if defined HAVE_ICONV_H
 // check if we have all unicodes
-#if (defined(ID3_ICONV_FORMAT_UTF16BE) && defined(ID3_ICONV_FORMAT_UTF16) && defined(ID3_ICONV_FORMAT_UTF8) && defined(ID3_ICONV_FORMAT_ASCII))
-# include <iconv.h>
-# include <errno.h>
+# if (defined(ID3_ICONV_FORMAT_UTF16BE) && defined(ID3_ICONV_FORMAT_UTF16) && defined(ID3_ICONV_FORMAT_UTF8) && defined(ID3_ICONV_FORMAT_ASCII))
+#   include <iconv.h>
+#   include <errno.h>
+#  else
+#   undef HAVE_ICONV_H
+#  endif
 #else
-# undef HAVE_ICONV_H
-#endif
-#endif
+#  if (defined(WIN32) && ((defined(_MSC_VER) && _MSC_VER > 1000) || (defined(__BORLANDC__) && __BORLANDC__  >= 0x0520)))
+#    include <mlang.h>
+#    define HAVE_MS_CONVERT
+#  endif //if (defined(WIN32) && defined (_MSC_VER) && _MSC_VER > 1000)
+#endif //#if defined HAVE_ICONV_H
+
+using namespace dami;
 
   // converts an ASCII string into a Unicode one
-dami::String mbstoucs(dami::String data)
+String mbstoucs(String data)
 {
   size_t size = data.size();
-  dami::String unicode(size * 2, '\0');
+  String unicode(size * 2, '\0');
   for (size_t i = 0; i < size; ++i)
   {
     unicode[i*2+1] = toascii(data[i]);
@@ -60,10 +68,10 @@ dami::String mbstoucs(dami::String data)
 }
 
 // converts a Unicode string into ASCII
-dami::String ucstombs(dami::String data)
+String ucstombs(dami::String data)
 {
   size_t size = data.size() / 2;
-  dami::String ascii(size, '\0');
+  String ascii(size, '\0');
   for (size_t i = 0; i < size; ++i)
   {
     ascii[i] = toascii(data[i*2+1]);
@@ -71,23 +79,101 @@ dami::String ucstombs(dami::String data)
   return ascii;
 }
 
-dami::String oldconvert(dami::String data, ID3_TextEnc sourceEnc, ID3_TextEnc targetEnc)
+String oldconvert(String data, ID3_TextEnc sourceEnc, ID3_TextEnc targetEnc)
 {
-  dami::String target;
-#define ID3_IS_ASCII(enc)      ((enc) == ID3TE_ASCII || (enc) == ID3TE_ISO8859_1 || (enc) == ID3TE_UTF8)
-#define ID3_IS_UNICODE(enc)    ((enc) == ID3TE_UNICODE || (enc) == ID3TE_UTF16 || (enc) == ID3TE_UTF16BE)
-  if (ID3_IS_ASCII(sourceEnc) && ID3_IS_UNICODE(targetEnc))
+  String target;
+  if (ID3TE_IS_SINGLE_BYTE_ENC(sourceEnc) && ID3TE_IS_DOUBLE_BYTE_ENC(targetEnc))
   {
     target = mbstoucs(data);
   }
-  else if (ID3_IS_UNICODE(sourceEnc) && ID3_IS_ASCII(targetEnc))
+  else if (ID3TE_IS_DOUBLE_BYTE_ENC(sourceEnc) && ID3TE_IS_SINGLE_BYTE_ENC(targetEnc))
   {
     target = ucstombs(data);
   }
   return target;
 }
 
-using namespace dami;
+#if defined(HAVE_MS_CONVERT)
+UINT GetMSCodePage(ID3_TextEnc enc)
+{
+#    define ID3_ICONV_FORMAT_UTF16BE   1201  //"Unicode (Big-Endian)", "unicodeFFFE", 1201
+#    define ID3_ICONV_FORMAT_UTF16     1200  //"Unicode", "unicode", 1200
+#    define ID3_ICONV_FORMAT_UTF8      65001 //"Unicode (UTF-8)", "utf-8", 65001
+#    define ID3_ICONV_FORMAT_ISO8859_1 28591 //"Western European (ISO)", "iso-8859-1", 28591
+  switch(enc)
+  {
+    case ID3TE_ISO8859_1:
+      return ID3_ICONV_FORMAT_ISO8859_1;
+      break;
+    case ID3TE_UTF16: //id3lib strips the byte order, hence the actual string becomes ID3TE_UTF16BE
+      return ID3_ICONV_FORMAT_UTF16BE; // this would be used if it had a unicode two byte byteorder: ID3_ICONV_FORMAT_UTF16;
+      break;
+    case ID3TE_UTF16BE:
+      return ID3_ICONV_FORMAT_UTF16BE;
+      break;
+    case ID3TE_UTF8:
+      return ID3_ICONV_FORMAT_UTF8;
+      break;
+    default:
+      return 0;
+      break;
+  }
+}
+
+String msconvert(String data, ID3_TextEnc sourceEnc, ID3_TextEnc targetEnc)
+{
+  String target;
+  IMultiLanguage* mlang = NULL;
+  IMLangConvertCharset* conv = NULL;
+  HRESULT hResult = S_OK;
+  UINT uiSrcCodePage = GetMSCodePage(sourceEnc);
+  UINT uiDstCodePage = GetMSCodePage(targetEnc);
+
+  if (uiSrcCodePage == uiDstCodePage) //this can happen when converting between ID3TE_UTF16BE and ID3TE_UTF16, since the byteorder is stripped they are treated equally
+    return data;
+
+  if (uiSrcCodePage == 0 || uiDstCodePage == 0)
+	  return oldconvert(data, sourceEnc, targetEnc);
+
+  //initialize com
+  hResult = CoInitialize(NULL); 
+  if (hResult != S_OK)
+  {
+    CoUninitialize();
+    return oldconvert(data, sourceEnc, targetEnc);
+  }
+
+  hResult = CoCreateInstance(CLSID_CMultiLanguage, NULL, CLSCTX_INPROC_SERVER, IID_IMultiLanguage, (void**) &mlang);
+  if (hResult != S_OK || NULL == mlang)
+  {
+    CoUninitialize();
+    return oldconvert(data, sourceEnc, targetEnc);
+  }
+
+  hResult = mlang->CreateConvertCharset(uiSrcCodePage, uiDstCodePage, 0, (struct IMLangConvertCharset **) &conv);
+  if ( hResult != S_OK || NULL == conv )
+  {
+    CoUninitialize();
+    return oldconvert(data, sourceEnc, targetEnc);
+  }
+
+  unsigned char* src = (unsigned char*)data.data();
+  UINT srcsize = data.size();
+  unsigned char* dst = new unsigned char[2 * data.size()];
+  UINT dstsize = 2 * data.size(); //big enough for 1 byte to two byte conversion
+
+  hResult = conv->DoConversion(src, &srcsize, dst, &dstsize);
+  if ( hResult != S_OK )
+  {
+    CoUninitialize();
+    return oldconvert(data, sourceEnc, targetEnc);
+  }
+
+  CoUninitialize();
+  target = (char*)dst;
+  return target;
+}
+#endif //defined(HAVE_MS_CONVERT)
 
 size_t dami::renderNumber(uchar *buffer, uint32 val, size_t size)
 {
@@ -132,9 +218,6 @@ namespace
 #define ID3LIB_BUFSIZ 1024
     char buf[ID3LIB_BUFSIZ];
     char* target_str = buf;
-    size_t target_size = ID3LIB_BUFSIZ;
-    
-    do
     {
       errno = 0;
       size_t nconv = iconv(cd, 
@@ -142,6 +225,9 @@ namespace
                            &target_str, &target_size);
       if (nconv == (size_t) -1 && errno != EINVAL && errno != E2BIG)
       {
+    size_t target_size = ID3LIB_BUFSIZ;
+    
+    do
 // errno is probably EILSEQ here, which means either an invalid byte sequence or a valid but unconvertible byte sequence 
         return target;
       }
@@ -158,7 +244,7 @@ namespace
     const char* format = NULL;
     switch (enc)
     {
-      case ID3TE_ASCII:
+      case ID3TE_ISO8859_1:
         format = ID3_ICONV_FORMAT_ASCII;
         break;
 
@@ -188,7 +274,11 @@ String dami::convert(String data, ID3_TextEnc sourceEnc, ID3_TextEnc targetEnc)
   if ((sourceEnc != targetEnc) && (data.size() > 0 ))
   {
 #if !defined HAVE_ICONV_H
+#  if defined(HAVE_MS_CONVERT)
+    target = msconvert(data, sourceEnc, targetEnc);
+#  else
     target = oldconvert(data, sourceEnc, targetEnc);
+#  endif
 #else
     const char* targetFormat = getFormat(targetEnc);
     const char* sourceFormat = getFormat(sourceEnc);

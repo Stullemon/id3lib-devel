@@ -31,7 +31,8 @@ A) ***Your project wants to link id3lib static, and has mfc linked static:
 5) Add the following include dirs to your program:
    /I <path_to_id3lib>\\include /I <path_to_id3lib>\\include\\id3  
 6) (add your code which uses id3lib)
-7) Try to compile, and see if you need any of the following:
+7) Add ole32.lib to link to your project if it is not allready there.
+8) Try to compile, and see if you need any of the following:
  (debug) /nodefaultlib:"msvcprtd"         or(release) /nodefaultlib:"msvcprt"
  (debug) /nodefaultlib:"MSVCRTD"          or(release) /nodefaultlib:"MSVCRT"
  (debug) /nodefaultlib:"libcd"            or(release) /nodefaultlib:"libc"
@@ -46,7 +47,8 @@ B)***Your project wants to link id3lib static, and has mfc linked dynamic or has
 5) Add the following include dirs to your program:
    /I <path_to_id3lib>\\include /I <path_to_id3lib>\\include\\id3
 6) (add your code which uses id3lib)
-7) Try to compile, and see if you need any of the following:
+7) Add ole32.lib to link to your project if it is not allready there.
+8) Try to compile, and see if you need any of the following:
  (debug) /nodefaultlib:"msvcprtd"         or(release) /nodefaultlib:"msvcprt"
  (debug) /nodefaultlib:"MSVCRTD"          or(release) /nodefaultlib:"MSVCRT"
  (debug) /nodefaultlib:"libcmtd"          or(release) /nodefaultlib:"libcmt"
