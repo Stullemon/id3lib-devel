@@ -1,4 +1,4 @@
-// $Id: utils.cpp,v 1.27 2002/08/13 10:39:58 t1mpy Exp $
+// $Id: utils.cpp,v 1.28 2002/08/13 14:26:21 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -50,6 +50,10 @@
 #  if (defined(WIN32) && ((defined(_MSC_VER) && _MSC_VER > 1000) || (defined(__BORLANDC__) && __BORLANDC__  >= 0x0520)))
 #    include <mlang.h>
 #    define HAVE_MS_CONVERT
+#    define ID3_MSCODEPAGE_UTF16BE   1201  //"Unicode (Big-Endian)", "unicodeFFFE", 1201
+#    define ID3_MSCODEPAGE_UTF16     1200  //"Unicode", "unicode", 1200
+#    define ID3_MSCODEPAGE_UTF8      65001 //"Unicode (UTF-8)", "utf-8", 65001
+#    define ID3_MSCODEPAGE_ISO8859_1 28591 //"Western European (ISO)", "iso-8859-1", 28591
 #  endif //if (defined(WIN32) && defined (_MSC_VER) && _MSC_VER > 1000)
 #endif //#if defined HAVE_ICONV_H
 
@@ -68,7 +72,7 @@ String mbstoucs(String data)
 }
 
 // converts a Unicode string into ASCII
-String ucstombs(dami::String data)
+String ucstombs(String data)
 {
   size_t size = data.size() / 2;
   String ascii(size, '\0');
@@ -96,23 +100,19 @@ String oldconvert(String data, ID3_TextEnc sourceEnc, ID3_TextEnc targetEnc)
 #if defined(HAVE_MS_CONVERT)
 UINT GetMSCodePage(ID3_TextEnc enc)
 {
-#    define ID3_ICONV_FORMAT_UTF16BE   1201  //"Unicode (Big-Endian)", "unicodeFFFE", 1201
-#    define ID3_ICONV_FORMAT_UTF16     1200  //"Unicode", "unicode", 1200
-#    define ID3_ICONV_FORMAT_UTF8      65001 //"Unicode (UTF-8)", "utf-8", 65001
-#    define ID3_ICONV_FORMAT_ISO8859_1 28591 //"Western European (ISO)", "iso-8859-1", 28591
   switch(enc)
   {
     case ID3TE_ISO8859_1:
-      return ID3_ICONV_FORMAT_ISO8859_1;
+      return ID3_MSCODEPAGE_ISO8859_1;
       break;
     case ID3TE_UTF16: //id3lib strips the byte order, hence the actual string becomes ID3TE_UTF16BE
-      return ID3_ICONV_FORMAT_UTF16BE; // this would be used if it had a unicode two byte byteorder: ID3_ICONV_FORMAT_UTF16;
+      return ID3_MSCODEPAGE_UTF16BE; // this would be used if it had a unicode two byte byteorder: ID3_MSCODEPAGE_UTF16;
       break;
     case ID3TE_UTF16BE:
-      return ID3_ICONV_FORMAT_UTF16BE;
+      return ID3_MSCODEPAGE_UTF16BE;
       break;
     case ID3TE_UTF8:
-      return ID3_ICONV_FORMAT_UTF8;
+      return ID3_MSCODEPAGE_UTF8;
       break;
     default:
       return 0;
@@ -160,7 +160,7 @@ String msconvert(String data, ID3_TextEnc sourceEnc, ID3_TextEnc targetEnc)
   unsigned char* src = (unsigned char*)data.data();
   UINT srcsize = data.size();
   unsigned char* dst = new unsigned char[2 * data.size()];
-  UINT dstsize = 2 * data.size(); //big enough for 1 byte to two byte conversion
+  UINT dstsize = (2 * data.size()) + 2; //big enough for 1 byte to two byte conversion, plus two bytes for byteorder header
 
   hResult = conv->DoConversion(src, &srcsize, dst, &dstsize);
   if ( hResult != S_OK )
@@ -218,6 +218,9 @@ namespace
 #define ID3LIB_BUFSIZ 1024
     char buf[ID3LIB_BUFSIZ];
     char* target_str = buf;
+    size_t target_size = ID3LIB_BUFSIZ;
+    
+    do
     {
       errno = 0;
       size_t nconv = iconv(cd, 
@@ -225,9 +228,6 @@ namespace
                            &target_str, &target_size);
       if (nconv == (size_t) -1 && errno != EINVAL && errno != E2BIG)
       {
-    size_t target_size = ID3LIB_BUFSIZ;
-    
-    do
 // errno is probably EILSEQ here, which means either an invalid byte sequence or a valid but unconvertible byte sequence 
         return target;
       }
