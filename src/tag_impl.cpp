@@ -1,4 +1,4 @@
-// $Id: tag_impl.cpp,v 1.12 2002/09/13 15:40:18 t1mpy Exp $
+// $Id: tag_impl.cpp,v 1.13 2002/09/21 16:02:54 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -154,14 +154,14 @@ ID3_TagImpl::ID3_TagImpl(const char *name)
     _file_size(0),
     _prepended_bytes(0),
     _appended_bytes(0),
-    _is_file_writable(false)
+    _is_file_writable(false),
+    _mp3_info(NULL) // need to do this before this->Clear()
 {
 // added for detecting memory leaks in VC
 #if (defined(_DEBUG) && defined(_MSC_VER) && _MSC_VER > 1000 && ID3LIB_LINKOPTION == LINKOPTION_CREATE_DYNAMIC)
   _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
   _CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_DEBUG );
 #endif
-  _mp3_info = NULL; // need to do this before this->Clear()
   this->Clear();
   if (name)
   {
@@ -176,7 +176,8 @@ ID3_TagImpl::ID3_TagImpl(const ID3_Tag &tag)
     _file_size(0),
     _prepended_bytes(0),
     _appended_bytes(0),
-    _is_file_writable(false)
+    _is_file_writable(false),
+    _mp3_info(NULL) // need to do this before this->Clear()
 {
 // added for detecting memory leaks in VC
 #if (defined(_DEBUG) && defined(_MSC_VER) && _MSC_VER > 1000 && ID3LIB_LINKOPTION == LINKOPTION_CREATE_DYNAMIC)
@@ -224,7 +225,7 @@ ID3_Err ID3_TagImpl::GetLastError()
 {
   ID3_Err err = _last_error;
   _last_error = ID3E_NoError;
-  return err; 
+  return err;
 }
 
 void ID3_TagImpl::AddFrame(const ID3_Frame& frame)
