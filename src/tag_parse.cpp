@@ -1,4 +1,4 @@
-// $Id: tag_parse.cpp,v 1.47 2002/11/24 16:33:37 t1mpy Exp $
+// $Id: tag_parse.cpp,v 1.48 2002/11/24 17:35:22 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -355,12 +355,22 @@ void ID3_TagImpl::ParseFile()
         _file_tags.add(ID3TT_LYRICS3);
         wr.setEnd(wr.getCur());
       }
-      ID3D_NOTICE( "ID3_TagImpl::ParseFile(): lyr3v2? cur = " << wr.getCur() );
+      ID3D_NOTICE( "ID3_TagImpl::ParseReader(): lyr3v2? cur = " << wr.getCur() );
       if (_tags_to_parse.test(ID3TT_LYRICS3V2) && lyr3::v2::parse(*this, wr))
       {
-        ID3D_NOTICE( "ID3_TagImpl::ParseFile(): lyr3v2! cur = " << wr.getCur() );
-        _file_tags.add(ID3TT_ID3V1);
-        wr.setEnd(wr.getCur());
+        ID3D_NOTICE( "ID3_TagImpl::ParseReader(): lyr3v2! cur = " << wr.getCur() );
+        _file_tags.add(ID3TT_LYRICS3V2);
+        cur = wr.getCur();
+        wr.setCur(wr.getEnd());//set to end to seek id3v1 tag
+        //check for id3v1 tag and set End accordingly
+        ID3D_NOTICE( "ID3_TagImpl::ParseReader(): id3v1? cur = " << wr.getCur() );
+        if (_tags_to_parse.test(ID3TT_ID3V1) && id3::v1::parse(*this, wr))
+        {
+          ID3D_NOTICE( "ID3_TagImpl::ParseReader(): id3v1! cur = " << wr.getCur() );
+          _file_tags.add(ID3TT_ID3V1);
+        }
+        wr.setCur(cur);
+        wr.setEnd(cur);
       }
       ID3D_NOTICE( "ID3_TagImpl::ParseFile(): id3v1? cur = " << wr.getCur() );
       if (_tags_to_parse.test(ID3TT_ID3V1) && id3::v1::parse(*this, wr))
@@ -533,8 +543,18 @@ void ID3_TagImpl::ParseReader(ID3_Reader &reader)
       if (_tags_to_parse.test(ID3TT_LYRICS3V2) && lyr3::v2::parse(*this, wr))
       {
         ID3D_NOTICE( "ID3_TagImpl::ParseReader(): lyr3v2! cur = " << wr.getCur() );
-        _file_tags.add(ID3TT_ID3V1);
-        wr.setEnd(wr.getCur());
+        _file_tags.add(ID3TT_LYRICS3V2);
+        cur = wr.getCur();
+        wr.setCur(wr.getEnd());//set to end to seek id3v1 tag
+        //check for id3v1 tag and set End accordingly
+        ID3D_NOTICE( "ID3_TagImpl::ParseReader(): id3v1? cur = " << wr.getCur() );
+        if (_tags_to_parse.test(ID3TT_ID3V1) && id3::v1::parse(*this, wr))
+        {
+          ID3D_NOTICE( "ID3_TagImpl::ParseReader(): id3v1! cur = " << wr.getCur() );
+          _file_tags.add(ID3TT_ID3V1);
+        }
+        wr.setCur(cur);
+        wr.setEnd(cur);
       }
       ID3D_NOTICE( "ID3_TagImpl::ParseReader(): id3v1? cur = " << wr.getCur() );
       if (_tags_to_parse.test(ID3TT_ID3V1) && id3::v1::parse(*this, wr))
