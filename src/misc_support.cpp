@@ -1,4 +1,4 @@
-// $Id: misc_support.cpp,v 1.39 2002/09/13 15:39:53 t1mpy Exp $
+// $Id: misc_support.cpp,v 1.40 2002/09/19 09:54:51 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -844,7 +844,7 @@ size_t ID3_GetV1GenreNum(char* sGenre)
   if (strlen(sGenre) < 3)
     return ulGenre;
 
-  // If the genre string begins with "(ddd)", where "ddd" is a number, then 
+  // If the genre string begins with "(ddd)", where "ddd" is a number, then
   // "ddd" is the genre number---get it
   while (1)
   {
@@ -865,7 +865,7 @@ size_t ID3_GetV1GenreNum(char* sGenre)
         continue;
       }
       if (*pCur == '\0')
-        break; //allready at end of text, only text has "(\0"      
+        break; //allready at end of text, only text has "(\0"
       if (*pCur == '(')
       { // starts with "((" so rest is text
         sGenre += iStart;
@@ -1016,10 +1016,10 @@ ID3_Frame* ID3_AddGenre(ID3_Tag* tag, size_t genreNum, char* genre, bool add_v1_
     if (strlen(genre) > 1023)
     {
       delete newgenre;
-      delete [1024] tmpgenre1;
+      delete [] tmpgenre1;
       return NULL;
     }
-    sprintf(tmpgenre1, "%s\0", genre);
+    sprintf(tmpgenre1, "%s", genre);
 
     newGenreNum1 = ID3_GetV1GenreNum(tmpgenre1); //get's the first and strips it
     if (strlen(tmpgenre1) != 0)
@@ -1065,20 +1065,20 @@ ID3_Frame* ID3_AddGenre(ID3_Tag* tag, size_t genreNum, char* genre, bool add_v1_
     size_t size;
     if (genreNum < ID3_NR_OF_V1_GENRES)
     {
-      size = sprintf(sGenre, "(%lu)\0", (luint) genreNum);
+      size = sprintf(sGenre, "(%lu)", (luint) genreNum);
       newgenre->append(sGenre, size);
     }
     if (newGenreNum1 < ID3_NR_OF_V1_GENRES && newGenreNum1 != genreNum)
     {
-      size = sprintf(sGenre, "(%lu)\0", (luint) newGenreNum1);
+      size = sprintf(sGenre, "(%lu)", (luint) newGenreNum1);
       newgenre->append(sGenre, size);
     }
     if (newGenreNum2 < ID3_NR_OF_V1_GENRES && newGenreNum2 != genreNum && newGenreNum2 != newGenreNum1)
     {
-      size = sprintf(sGenre, "(%lu)\0", (luint) newGenreNum2);
+      size = sprintf(sGenre, "(%lu)", (luint) newGenreNum2);
       newgenre->append(sGenre, size);
     }
-    delete [6] sGenre;
+    delete [] sGenre;
   }
   if (addRXorCR)
   { // they want CR or RX o be added, if there is
@@ -1116,14 +1116,14 @@ ID3_Frame* ID3_AddGenre(ID3_Tag* tag, size_t genreNum, char* genre, bool add_v1_
   if (newgenre->size() == 0)
   {
     delete newgenre;
-    delete [1024] tmpgenre1;
+    delete [] tmpgenre1;
     return NULL;
   }
 
   sprintf(tmpgenre1, newgenre->c_str());
   delete newgenre;
   ID3_Frame* newframe = ID3_AddGenre(tag, tmpgenre1, replace);
-  delete [1024] tmpgenre1;
+  delete [] tmpgenre1;
   return newframe;
 }
 
