@@ -1,4 +1,4 @@
-// $Id: header_tag.cpp,v 1.25 2002/09/13 15:37:23 t1mpy Exp $
+// $Id: header_tag.cpp,v 1.26 2002/09/19 09:54:39 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -97,6 +97,10 @@ ID3_Err ID3_TagHeader::Render(ID3_Writer& writer) const
             break;
           }
         }
+      }
+      default:
+      {
+        break; //can't reach here, but added to avoid compiler warnings
       }
     }
   //  else //not implemented

@@ -1,4 +1,4 @@
-// $Id: frame_parse.cpp,v 1.35 2002/09/13 15:38:56 t1mpy Exp $
+// $Id: frame_parse.cpp,v 1.36 2002/09/19 09:54:25 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -139,6 +139,10 @@ namespace
               linked_fixed_size = static_cast<size_t>(fp->Get());
               ID3D_NOTICE( "parseFields(): found linked_fixed_size = " << linked_fixed_size );
               break;
+            }
+            default:
+            {
+              break; //should never reach here, added to avoid compiler errors
             }
           }
         }
