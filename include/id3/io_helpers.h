@@ -1,8 +1,9 @@
 // -*- C++ -*-
-// $Id: io_helpers.h,v 1.7 2002/06/29 17:43:19 t1mpy Exp $
+// $Id: io_helpers.h,v 1.8 2002/09/13 14:26:47 t1mpy Exp $
 
 // id3lib: a software library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
+// Copyright 2002 Thijmen Klok (thijmen@id3lib.org)
 
 // This library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU Library General Public License as published by
@@ -28,6 +29,16 @@
 #ifndef _ID3LIB_IO_HELPERS_H_
 #define _ID3LIB_IO_HELPERS_H_
 
+#if defined(__BORLANDC__)
+// due to a bug in borland it sometimes still wants mfc compatibility even when you disable it
+#  if defined(_MSC_VER)
+#    undef _MSC_VER
+#  endif
+#  if defined(__MFC_COMPAT__)
+#    undef __MFC_COMPAT__
+#  endif
+#endif
+
 #include "id3/id3lib_strings.h"
 #include "reader.h"
 #include "writer.h"
@@ -44,14 +55,14 @@ namespace dami
       ID3_Reader::pos_type _pos;
       bool _locked;
      public:
-      ExitTrigger(ID3_Reader& rdr) 
+      ExitTrigger(ID3_Reader& rdr)
         : _reader(rdr), _pos(rdr.getCur()), _locked(true)
       { ; }
-      ExitTrigger(ID3_Reader& rdr, ID3_Reader::pos_type pos) 
-        : _reader(rdr), _pos(pos) 
+      ExitTrigger(ID3_Reader& rdr, ID3_Reader::pos_type pos)
+        : _reader(rdr), _pos(pos)
       { ; }
       virtual ~ExitTrigger() { if (_locked) _reader.setCur(_pos); }
-    
+
       void release() { _locked = false; }
       void update() { _pos = _reader.getCur(); }
       void setExitPos(ID3_Reader::pos_type pos) { _pos = pos; }
