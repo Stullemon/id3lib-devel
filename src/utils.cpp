@@ -1,4 +1,4 @@
-// $Id: utils.cpp,v 1.28 2002/08/13 14:26:21 t1mpy Exp $
+// $Id: utils.cpp,v 1.29 2002/09/13 15:40:40 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -39,12 +39,12 @@
 #include "id3/utils.h" // has <config.h> "id3/id3lib_streams.h" "id3/globals.h" "id3/id3lib_strings.h"
 
 #if defined HAVE_ICONV_H
-// check if we have all unicodes
-# if (defined(ID3_ICONV_FORMAT_UTF16BE) && defined(ID3_ICONV_FORMAT_UTF16) && defined(ID3_ICONV_FORMAT_UTF8) && defined(ID3_ICONV_FORMAT_ASCII))
-#   include <iconv.h>
-#   include <errno.h>
+   // check if we have all unicodes
+#  if (defined(ID3_ICONV_FORMAT_UTF16BE) && defined(ID3_ICONV_FORMAT_UTF16) && defined(ID3_ICONV_FORMAT_UTF8) && defined(ID3_ICONV_FORMAT_ASCII))
+#    include <iconv.h>
+#    include <errno.h>
 #  else
-#   undef HAVE_ICONV_H
+#    undef HAVE_ICONV_H
 #  endif
 #else
 #  if (defined(WIN32) && ((defined(_MSC_VER) && _MSC_VER > 1000) || (defined(__BORLANDC__) && __BORLANDC__  >= 0x0520)))
@@ -133,10 +133,10 @@ String msconvert(String data, ID3_TextEnc sourceEnc, ID3_TextEnc targetEnc)
     return data;
 
   if (uiSrcCodePage == 0 || uiDstCodePage == 0)
-	  return oldconvert(data, sourceEnc, targetEnc);
+    return oldconvert(data, sourceEnc, targetEnc);
 
   //initialize com
-  hResult = CoInitialize(NULL); 
+  hResult = CoInitialize(NULL);
   if (hResult != S_OK)
   {
     CoUninitialize();
@@ -159,7 +159,7 @@ String msconvert(String data, ID3_TextEnc sourceEnc, ID3_TextEnc targetEnc)
 
   unsigned char* src = (unsigned char*)data.data();
   UINT srcsize = data.size();
-  unsigned char* dst = new unsigned char[2 * data.size()];
+  unsigned char* dst = LEAKTESTNEW(unsigned char[2 * data.size()]);
   UINT dstsize = (2 * data.size()) + 2; //big enough for 1 byte to two byte conversion, plus two bytes for byteorder header
 
   hResult = conv->DoConversion(src, &srcsize, dst, &dstsize);
@@ -201,7 +201,7 @@ String dami::renderNumber(uint32 val, size_t size)
 
 #if defined(HAVE_ICONV_H)
 
-namespace 
+namespace
 {
   String convert_i(iconv_t cd, String source)
   {
@@ -210,7 +210,7 @@ namespace
 #if defined(ID3LIB_ICONV_OLDSTYLE)
     const char* source_str = source.data();
 #else
-    char *source_str = new char[source.size()+1];
+    char *source_str = LEAKTESTNEWSIZED(char, source.size()+1);
     source.copy(source_str, String::npos);
     source_str[source.length()] = 0;
 #endif
@@ -223,12 +223,12 @@ namespace
     do
     {
       errno = 0;
-      size_t nconv = iconv(cd, 
-                           &source_str, &source_size, 
+      size_t nconv = iconv(cd,
+                           &source_str, &source_size,
                            &target_str, &target_size);
       if (nconv == (size_t) -1 && errno != EINVAL && errno != E2BIG)
       {
-// errno is probably EILSEQ here, which means either an invalid byte sequence or a valid but unconvertible byte sequence 
+// errno is probably EILSEQ here, which means either an invalid byte sequence or a valid but unconvertible byte sequence
         return target;
       }
       target.append(buf, ID3LIB_BUFSIZ - target_size);
@@ -251,15 +251,15 @@ namespace
       case ID3TE_UTF16:
         format = ID3_ICONV_FORMAT_UTF16;
         break;
-        
+
       case ID3TE_UTF16BE:
         format = ID3_ICONV_FORMAT_UTF16BE;
         break;
-        
+
       case ID3TE_UTF8:
         format = ID3_ICONV_FORMAT_UTF8;
         break;
-        
+
       default:
         break;
     }
@@ -282,7 +282,7 @@ String dami::convert(String data, ID3_TextEnc sourceEnc, ID3_TextEnc targetEnc)
 #else
     const char* targetFormat = getFormat(targetEnc);
     const char* sourceFormat = getFormat(sourceEnc);
-   
+
     iconv_t cd = iconv_open (targetFormat, sourceFormat);
     if (cd != (iconv_t) -1)
     {
@@ -333,13 +333,13 @@ ID3_Err dami::createFile(String name, fstream& file)
   {
     file.close();
   }
-    
+
   file.open(name.c_str(), ios::in | ios::out | ios::binary | ios::trunc);
   if (!file)
   {
     return ID3E_ReadOnly;
   }
-    
+
   return ID3E_NoError;
 }
 
@@ -388,7 +388,7 @@ ID3_Err dami::openWritableFile(String name, fstream& file)
   {
     return ID3E_NoFile;
   }
-    
+
   if (file.is_open())
   {
     file.close();
@@ -398,7 +398,7 @@ ID3_Err dami::openWritableFile(String name, fstream& file)
   {
     return ID3E_ReadOnly;
   }
-    
+
   return ID3E_NoError;
 }
 
@@ -408,7 +408,7 @@ ID3_Err dami::openWritableFile(String name, ofstream& file)
   {
     return ID3E_NoFile;
   }
-    
+
   if (file.is_open())
   {
     file.close();
@@ -418,7 +418,7 @@ ID3_Err dami::openWritableFile(String name, ofstream& file)
   {
     return ID3E_ReadOnly;
   }
-    
+
   return ID3E_NoError;
 }
 
@@ -433,7 +433,7 @@ ID3_Err dami::openReadableFile(String name, fstream& file)
   {
     return ID3E_NoFile;
   }
-    
+
   return ID3E_NoError;
 }
 
@@ -448,7 +448,7 @@ ID3_Err dami::openReadableFile(String name, ifstream& file)
   {
     return ID3E_NoFile;
   }
-    
+
   return ID3E_NoError;
 }
 
