@@ -1,4 +1,4 @@
-// $Id: tag_parse_musicmatch.cpp,v 1.20 2002/09/13 15:37:47 t1mpy Exp $
+// $Id: tag_parse_musicmatch.cpp,v 1.21 2003/01/04 16:34:59 cmumford Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -115,6 +115,7 @@ namespace
 
 bool mm::parse(ID3_TagImpl& tag, ID3_Reader& rdr)
 {
+  size_t i;
   io::ExitTrigger et(rdr);
   ID3_Reader::pos_type end = rdr.getCur();
   if (end < rdr.getBeg() + 48)
@@ -159,7 +160,7 @@ bool mm::parse(ID3_TagImpl& tag, ID3_Reader& rdr)
   uint32 offsets[5];
 
   io::WindowedReader offsetWindow(rdr, 20);
-  for (size_t i = 0; i < 5; ++i)
+  for (i = 0; i < 5; ++i)
   {
     offsets[i] = io::readLENumber(rdr, sizeof(uint32));
   }
@@ -179,7 +180,7 @@ bool mm::parse(ID3_TagImpl& tag, ID3_Reader& rdr)
     // by exactly 256 bytes.
     size_t possibleSizes[] = { 8132, 8004, 7936 };
 
-    for (size_t i = 0; i < sizeof(possibleSizes)/sizeof(size_t); ++i)
+    for (i = 0; i < sizeof(possibleSizes)/sizeof(size_t); ++i)
     {
       dataWindow.setCur(dataWindow.getEnd());
 
@@ -219,7 +220,7 @@ bool mm::parse(ID3_TagImpl& tag, ID3_Reader& rdr)
   sectionSizes[4] = metadataSize;
 
   size_t lastOffset = 0;
-  for (int i = 0; i < 5; i++)
+  for (i = 0; i < 5; i++)
   {
     size_t thisOffset = offsets[i];
     //ASSERT(thisOffset > lastOffset);
@@ -246,7 +247,7 @@ bool mm::parse(ID3_TagImpl& tag, ID3_Reader& rdr)
 
   // Now calculate the adjusted offsets
   offsets[0] = dataWindow.getBeg();
-  for (size_t i = 0; i < 4; ++i)
+  for (i = 0; i < 4; ++i)
   {
     offsets[i+1] = offsets[i] + sectionSizes[i];
   }
