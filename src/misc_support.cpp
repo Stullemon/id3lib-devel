@@ -1,4 +1,4 @@
-// $Id: misc_support.cpp,v 1.42 2003/01/04 17:10:50 cmumford Exp $
+// $Id: misc_support.cpp,v 1.43 2003/01/05 18:02:54 cmumford Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -575,11 +575,7 @@ bool ID3_HasPicture(const ID3_Tag* tag)
     ID3_Frame* frame = tag->Find(ID3FID_PICTURE);
     if (frame != NULL)
     {
-      ID3_Field* myField = frame->GetField(ID3FN_DATA);
-      if (myField != NULL)
-        return true;
-      else
-        return false;
+      return frame->GetField(ID3FN_DATA) != NULL;
     }
     else return false;
   }
