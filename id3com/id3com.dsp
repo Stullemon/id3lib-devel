@@ -52,7 +52,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 ../libprj/id3libd.lib /nologo /subsystem:windows /dll /debug /machine:I386 /nodefaultlib:"libcmtd" /pdbtype:sept
-# ADD LINK32 ../libprj/id3libd.lib /nologo /subsystem:windows /dll /debug /machine:I386 /pdbtype:sept
+# ADD LINK32 ../libprj/id3libd.lib ../zlib/zlibD.lib /nologo /subsystem:windows /dll /debug /machine:I386 /pdbtype:sept
+# SUBTRACT LINK32 /nodefaultlib
 # Begin Custom Build - Performing registration
 OutDir=.\Debug
 TargetPath=.\Debug\id3com.dll
@@ -89,7 +90,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 ../libprj/id3lib.lib /nologo /subsystem:windows /dll /machine:I386 /nodefaultlib:"libcmt"
-# ADD LINK32 ../libprj/id3lib.lib /nologo /subsystem:windows /dll /machine:I386
+# ADD LINK32 ../libprj/id3lib.lib ..\zlib\zlib.lib /nologo /subsystem:windows /dll /machine:I386
 # Begin Custom Build - Performing registration
 OutDir=.\Release
 TargetPath=.\Release\id3com.dll
