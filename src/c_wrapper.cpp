@@ -1,4 +1,4 @@
-// $Id: c_wrapper.cpp,v 1.22 2002/09/13 15:37:23 t1mpy Exp $
+// $Id: c_wrapper.cpp,v 1.23 2002/09/21 17:20:40 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -118,13 +118,15 @@ extern "C"
     }
   }
 
-  ID3_C_EXPORT void CCONV
+  ID3_C_EXPORT bool CCONV
   ID3Tag_AttachFrame(ID3Tag *tag, ID3Frame *frame)
   {
+    bool b = false;
     if (tag)
     {
-      ID3_CATCH(reinterpret_cast<ID3_Tag *>(tag)->AttachFrame(reinterpret_cast<ID3_Frame *>(frame)));
+      ID3_CATCH(b = reinterpret_cast<ID3_Tag *>(tag)->AttachFrame(reinterpret_cast<ID3_Frame *>(frame)));
     }
+    return b;
   }
 
   ID3_C_EXPORT void CCONV

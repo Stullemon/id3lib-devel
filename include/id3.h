@@ -1,14 +1,14 @@
-/* $Id: id3.h,v 1.20 2002/08/10 11:47:50 t1mpy Exp $
- * 
+/* $Id: id3.h,v 1.21 2002/09/21 17:20:39 t1mpy Exp $
+ *
  * id3lib: a software library for creating and manipulating id3v1/v2 tags
  * Copyright 1999, 2000  Scott Thomas Haug
  * Copyright 2002 Thijmen Klok (thijmen@id3lib.org)
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at your
  * option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
@@ -52,7 +52,7 @@ extern "C"
   ID3_C_EXPORT void                 CCONV ID3Tag_SetExtendedHeader    (ID3Tag *tag, bool ext);
   ID3_C_EXPORT void                 CCONV ID3Tag_SetPadding           (ID3Tag *tag, bool pad);
   ID3_C_EXPORT void                 CCONV ID3Tag_AddFrame             (ID3Tag *tag, const ID3Frame *frame);
-  ID3_C_EXPORT void                 CCONV ID3Tag_AttachFrame          (ID3Tag *tag, ID3Frame *frame);
+  ID3_C_EXPORT bool                 CCONV ID3Tag_AttachFrame          (ID3Tag *tag, ID3Frame *frame);
   ID3_C_EXPORT void                 CCONV ID3Tag_AddFrames            (ID3Tag *tag, const ID3Frame *frames, size_t num);
   ID3_C_EXPORT ID3Frame*            CCONV ID3Tag_RemoveFrame          (ID3Tag *tag, const ID3Frame *frame);
   ID3_C_EXPORT ID3_Err              CCONV ID3Tag_Parse                (ID3Tag *tag, const uchar header[ID3_TAGHEADERSIZE], const uchar *buffer);

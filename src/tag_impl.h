@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: tag_impl.h,v 1.9 2002/09/13 15:40:18 t1mpy Exp $
+// $Id: tag_impl.h,v 1.10 2002/09/21 17:20:39 t1mpy Exp $
 
 // id3lib: a software library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -110,7 +110,7 @@ public:
 
   void       AddFrame(const ID3_Frame&);
   void       AddFrame(const ID3_Frame*);
-  void       AttachFrame(ID3_Frame*);
+  bool       AttachFrame(ID3_Frame*);
   bool       IsValidFrame(ID3_Frame&, bool);
   void       checkFrames();
   ID3_Frame* RemoveFrame(const ID3_Frame *);

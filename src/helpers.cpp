@@ -1,4 +1,4 @@
-// $Id: helpers.cpp,v 1.12 2002/09/13 15:37:47 t1mpy Exp $
+// $Id: helpers.cpp,v 1.13 2002/09/21 17:20:39 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -109,7 +109,7 @@ ID3_Frame* id3::v2::setFrameText(ID3_TagImpl& tag, ID3_FrameID id, String text)
   if (!frame)
   {
     frame = LEAKTESTNEW( ID3_Frame(id));
-    tag.AttachFrame(frame);
+    if(!tag.AttachFrame(frame)) return NULL;
   }
   frame->GetField(ID3FN_TEXT)->Set(text.c_str());
 
@@ -284,7 +284,7 @@ ID3_Frame* id3::v2::setComment(ID3_TagImpl& tag, String text, String desc,
   {
     ID3D_NOTICE( "id3::v2::setComment: creating new comment frame" );
     frame = LEAKTESTNEW( ID3_Frame(ID3FID_COMMENT));
-    tag.AttachFrame(frame);
+    if(!tag.AttachFrame(frame)) return NULL;
   }
   if (!frame)
   {
@@ -462,7 +462,7 @@ ID3_Frame* id3::v2::setLyrics(ID3_TagImpl& tag, String text, String desc,
   if (frame == NULL)
   {
     frame = LEAKTESTNEW( ID3_Frame(ID3FID_UNSYNCEDLYRICS));
-    tag.AttachFrame(frame);
+    if(!tag.AttachFrame(frame)) return NULL;
   }
   frame->GetField(ID3FN_LANGUAGE)->Set(lang.c_str());
   frame->GetField(ID3FN_DESCRIPTION)->Set(desc.c_str());
@@ -514,7 +514,7 @@ ID3_Frame* id3::v2::setSyncLyrics(ID3_TagImpl& tag, BString data,
   if (!frame)
   {
     frame = LEAKTESTNEW( ID3_Frame(ID3FID_SYNCEDLYRICS));
-    tag.AttachFrame(frame);
+    if(!tag.AttachFrame(frame)) return NULL;
   }
   frame->GetField(ID3FN_LANGUAGE)->Set(lang.c_str());
   frame->GetField(ID3FN_DESCRIPTION)->Set(desc.c_str());
