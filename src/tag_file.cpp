@@ -1,4 +1,4 @@
-// $Id: tag_file.cpp,v 1.41 2002/09/13 15:37:23 t1mpy Exp $
+// $Id: tag_file.cpp,v 1.42 2002/11/02 21:04:00 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -324,6 +324,7 @@ size_t RenderV2ToFile(const ID3_TagImpl& tag, fstream& file)
 #endif //defined(HAVE_SYS_STAT_H)
 
 //    file = tmpOut;
+    file.clear();//to clear the eof mark
     err = openWritableFile(filename, file);
     if (err != ID3E_NoError)
     {
