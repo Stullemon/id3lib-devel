@@ -1,8 +1,9 @@
 // -*- C++ -*-
-// $Id: id3lib_strings.h,v 1.3 2002/08/13 15:56:13 t1mpy Exp $
+// $Id: id3lib_strings.h,v 1.4 2002/08/13 15:59:22 t1mpy Exp $
 
 // id3lib: a software library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
+// Copyright 2002 Thijmen Klok (thijmen@id3lib.org)
 
 // This library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU Library General Public License as published by
