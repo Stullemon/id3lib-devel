@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: misc_support.h,v 1.28 2002/08/10 17:40:00 t1mpy Exp $
+// $Id: misc_support.h,v 1.29 2002/09/13 14:28:04 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -29,6 +29,16 @@
 #ifndef _ID3LIB_MISC_SUPPORT_H_
 #define _ID3LIB_MISC_SUPPORT_H_
 
+#if defined(__BORLANDC__)
+// due to a bug in borland it sometimes still wants mfc compatibility even when you disable it
+#  if defined(_MSC_VER)
+#    undef _MSC_VER
+#  endif
+#  if defined(__MFC_COMPAT__)
+#    undef __MFC_COMPAT__
+#  endif
+#endif
+
 #include <id3/tag.h>
 
 ID3_C_EXPORT char*      ID3_GetString(const ID3_Frame *, ID3_FieldID);
@@ -37,7 +47,7 @@ ID3_C_EXPORT char*      ID3_GetString(const ID3_Frame *, ID3_FieldID, size_t nIt
 ID3_C_EXPORT void ID3_FreeString(char *str);
 
 // defined in 'id3_misc_support.cpp'
-// these are 'convenience functions,' to make using the library easier for the 
+// these are 'convenience functions,' to make using the library easier for the
 // most common of operations
 ID3_C_EXPORT char*      ID3_GetArtist(const ID3_Tag*);
 ID3_C_EXPORT ID3_Frame* ID3_AddArtist(ID3_Tag*, const char*, bool replace = false);
@@ -58,7 +68,7 @@ ID3_C_EXPORT size_t     ID3_RemoveYears(ID3_Tag*);
 ID3_C_EXPORT char*      ID3_GetComment(const ID3_Tag*, const char* desc = NULL);
 ID3_C_EXPORT ID3_Frame* ID3_AddComment(ID3_Tag*, const char*, bool = false);
 ID3_C_EXPORT ID3_Frame* ID3_AddComment(ID3_Tag*, const char*, const char*, bool = false);
-ID3_C_EXPORT ID3_Frame* ID3_AddComment(ID3_Tag*, const char*, const char*, const char*, 
+ID3_C_EXPORT ID3_Frame* ID3_AddComment(ID3_Tag*, const char*, const char*, const char*,
                                        bool = false);
 ID3_C_EXPORT size_t     ID3_RemoveComments(ID3_Tag*, const char * = NULL);
 
@@ -87,20 +97,20 @@ ID3_C_EXPORT char*      ID3_GetLyricist(const ID3_Tag*);
 ID3_C_EXPORT ID3_Frame* ID3_AddLyricist(ID3_Tag *, const char *, bool replace = false);
 ID3_C_EXPORT size_t     ID3_RemoveLyricist(ID3_Tag*);
 
-ID3_C_EXPORT ID3_Frame* ID3_AddSyncLyrics(ID3_Tag*, const uchar*, size_t, 
+ID3_C_EXPORT ID3_Frame* ID3_AddSyncLyrics(ID3_Tag*, const uchar*, size_t,
                                           ID3_TimeStampFormat, bool = false);
-ID3_C_EXPORT ID3_Frame* ID3_AddSyncLyrics(ID3_Tag*, const uchar*, size_t, 
+ID3_C_EXPORT ID3_Frame* ID3_AddSyncLyrics(ID3_Tag*, const uchar*, size_t,
                                           ID3_TimeStampFormat, const char *, bool = false);
-ID3_C_EXPORT ID3_Frame* ID3_AddSyncLyrics(ID3_Tag*, const uchar*, size_t, 
+ID3_C_EXPORT ID3_Frame* ID3_AddSyncLyrics(ID3_Tag*, const uchar*, size_t,
                                           ID3_TimeStampFormat, const char *, const char *,
                                           bool = false);
-ID3_C_EXPORT ID3_Frame* ID3_AddSyncLyrics(ID3_Tag*, const uchar*, size_t, 
+ID3_C_EXPORT ID3_Frame* ID3_AddSyncLyrics(ID3_Tag*, const uchar*, size_t,
                                           ID3_TimeStampFormat, const char *, const char *,
                                           ID3_ContentType, bool = false);
-ID3_C_EXPORT ID3_Frame* ID3_GetSyncLyricsInfo(const ID3_Tag *tag, const char *lang, 
-                                              const char *desc, char &stampformat, 
+ID3_C_EXPORT ID3_Frame* ID3_GetSyncLyricsInfo(const ID3_Tag *tag, const char *lang,
+                                              const char *desc, char &stampformat,
                                               char &type, size_t &size);
-ID3_C_EXPORT ID3_Frame* ID3_GetSyncLyrics(const ID3_Tag *tag, const char *lang, 
+ID3_C_EXPORT ID3_Frame* ID3_GetSyncLyrics(const ID3_Tag *tag, const char *lang,
                                           const char *desc, char *pData, size_t &size);
 
 
@@ -132,6 +142,7 @@ ID3_C_EXPORT char *ID3_GetDescriptionOfPicType(ID3_Tag*, ID3_PictureType pictype
 //following routine courtesy of John George
 ID3_C_EXPORT size_t ID3_RemovePictureType(ID3_Tag*, ID3_PictureType pictype);
 
+ID3_C_EXPORT ID3_Frame* ID3_AddGenre(ID3_Tag* tag, size_t genreNum, char* genre, bool add_v1_genre_number = true, bool add_v1_genre_description = true, bool addRXorCR = false, bool replace = true);
 
 #endif /* _ID3LIB_MISC_SUPPORT_H_ */
 
