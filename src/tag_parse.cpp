@@ -1,4 +1,4 @@
-// $Id: tag_parse.cpp,v 1.44 2002/07/31 16:41:11 t1mpy Exp $
+// $Id: tag_parse.cpp,v 1.45 2002/08/19 23:52:37 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -238,7 +238,17 @@ void ID3_TagImpl::ParseFile()
       wr.setBeg(cur);
     } while (!wr.atEnd() && cur > last);
   }
-
+  // add silly padding outside the tag to _prepended_bytes
+  if (!wr.atEnd() && wr.peekChar() == '\0')
+  {
+    do
+    {
+      last = cur;
+      cur = wr.getCur() + 1;
+      wr.setBeg(cur);
+      wr.setCur(cur);
+    } while (!wr.atEnd() &&  cur > last && wr.peekChar() == '\0');
+  }
   _prepended_bytes = cur - beg;
 
   cur = wr.setCur(end);
