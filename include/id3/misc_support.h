@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: misc_support.h,v 1.29 2002/09/13 14:28:04 t1mpy Exp $
+// $Id: misc_support.h,v 1.30 2002/09/19 10:33:04 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -110,8 +110,8 @@ ID3_C_EXPORT ID3_Frame* ID3_AddSyncLyrics(ID3_Tag*, const uchar*, size_t,
 ID3_C_EXPORT ID3_Frame* ID3_GetSyncLyricsInfo(const ID3_Tag *tag, const char *lang,
                                               const char *desc, char &stampformat,
                                               char &type, size_t &size);
-ID3_C_EXPORT ID3_Frame* ID3_GetSyncLyrics(const ID3_Tag *tag, const char *lang,
-                                          const char *desc, char *pData, size_t &size);
+ID3_C_EXPORT ID3_Frame* ID3_GetSyncLyrics(const ID3_Tag* tag, const char* lang,
+                                          const char* desc, const uchar* &pData, size_t& size);
 
 
 //following routine courtesy of John George

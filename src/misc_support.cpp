@@ -1,4 +1,4 @@
-// $Id: misc_support.cpp,v 1.40 2002/09/19 09:54:51 t1mpy Exp $
+// $Id: misc_support.cpp,v 1.41 2002/09/19 10:32:15 t1mpy Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -1426,8 +1426,8 @@ ID3_Frame *ID3_GetSyncLyricsInfo(const ID3_Tag *tag, const char *desc,
   return frmExist;
 }
 
-ID3_Frame *ID3_GetSyncLyrics(const ID3_Tag *tag, const char *lang,
-                             const char *desc, const uchar *pData, size_t& size)
+ID3_Frame *ID3_GetSyncLyrics(const ID3_Tag* tag, const char* lang,
+                             const char* desc, const uchar* &pData, size_t& size)
 {
   // check if a SYLT frame of this language or descriptor exists
   ID3_Frame* frmExist = NULL;
