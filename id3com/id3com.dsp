@@ -43,14 +43,15 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D ID3LIB_LINKOPTION=1 /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "..\\" /I "..\include" /D "_DEBUG" /D "_MBCS" /D "WIN32" /D "_WINDOWS" /D "HAVE_CONFIG_H" /D ID3LIB_LINKOPTION=1 /FR /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "..\\" /I "..\include" /D "_DEBUG" /D "_MBCS" /D "WIN32" /D "_WINDOWS" /D "HAVE_CONFIG_H" /D ID3LIB_LINKOPTION=1 /Yu"stdafx.h" /FD /GZ /c
+# SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x809 /d "_DEBUG"
 # ADD RSC /l 0x809 /d "_DEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
-# ADD BASE LINK32 ../libprj/id3libd.lib /nologo /subsystem:windows /dll /debug /machine:I386 /pdbtype:sept /nodefaultlib:"libcmtd"
+# ADD BASE LINK32 ../libprj/id3libd.lib /nologo /subsystem:windows /dll /debug /machine:I386 /nodefaultlib:"libcmtd" /pdbtype:sept
 # ADD LINK32 ../libprj/id3libd.lib /nologo /subsystem:windows /dll /debug /machine:I386 /nodefaultlib:"libcmtd" /pdbtype:sept
 # Begin Custom Build - Performing registration
 OutDir=.\Debug
@@ -80,6 +81,7 @@ SOURCE="$(InputPath)"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O1 /I ".\\" /I "..\\" /I "..\include" /I "..\include\id3" /I "..\zlib\include" /D "NDEBUG" /D "_MBCS" /D "_ATL_STATIC_REGISTRY" /D "WIN32" /D "_WINDOWS" /D "HAVE_CONFIG_H" /D ID3LIB_LINKOPTION=1 /Yu"stdafx.h" /FD /c
 # ADD CPP /nologo /W3 /GX /O1 /I "..\\" /I "..\include" /D "NDEBUG" /D "_MBCS" /D "_ATL_STATIC_REGISTRY" /D "WIN32" /D "_WINDOWS" /D "HAVE_CONFIG_H" /D ID3LIB_LINKOPTION=1 /Yu"stdafx.h" /FD /c
+# SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x809 /d "NDEBUG"
 # ADD RSC /l 0x809 /d "NDEBUG"
 BSC32=bscmake.exe

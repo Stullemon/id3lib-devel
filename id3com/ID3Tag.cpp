@@ -836,7 +836,7 @@ STDMETHODIMP CID3Tag::get_VersionString(BSTR *pVal)
 														_ID3LIB_PATCH_VERSION,
 														__DATE__,
 														__TIME__);
-		*pVal = A2OLE(Buffer);
+		*pVal = SysAllocString(A2W(Buffer));
 		return S_OK;
 	}
 	catch (...)
