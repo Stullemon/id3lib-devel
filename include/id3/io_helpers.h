@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: io_helpers.h,v 1.8 2002/09/13 14:26:47 t1mpy Exp $
+// $Id: io_helpers.h,v 1.9 2009/08/31 09:13:43 nagilo Exp $
 
 // id3lib: a software library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -59,7 +59,7 @@ namespace dami
         : _reader(rdr), _pos(rdr.getCur()), _locked(true)
       { ; }
       ExitTrigger(ID3_Reader& rdr, ID3_Reader::pos_type pos)
-        : _reader(rdr), _pos(pos)
+        : _reader(rdr), _pos(pos), _locked(true)
       { ; }
       virtual ~ExitTrigger() { if (_locked) _reader.setCur(_pos); }
 
