@@ -1,4 +1,4 @@
-// $Id: test_io.cpp,v 1.6 2002/09/13 14:04:11 t1mpy Exp $
+// $Id: test_io.cpp,v 1.7 2009/08/31 22:01:50 nagilo Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 2002 Thijmen Klok (thijmen@id3lib.org)
@@ -36,6 +36,7 @@
 #include <id3/utils.h>
 
 using namespace dami;
+using namespace std;
 
 int
 main(size_t argc, const char** argv)

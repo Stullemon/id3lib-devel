@@ -1,4 +1,4 @@
-// $Id: test_remove.cpp,v 1.13 2002/09/13 14:04:11 t1mpy Exp $
+// $Id: test_remove.cpp,v 1.14 2009/08/31 22:01:50 nagilo Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 2002 Thijmen Klok (thijmen@id3lib.org)
@@ -34,6 +34,7 @@
 #include "id3/id3lib_strings.h"
 
 using namespace dami;
+using namespace std;
 
 typedef const char* LPCTSTR;
 
