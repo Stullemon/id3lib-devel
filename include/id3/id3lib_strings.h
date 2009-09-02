@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: id3lib_strings.h,v 1.7 2002/09/13 14:26:47 t1mpy Exp $
+// $Id: id3lib_strings.h,v 1.8 2009/09/02 09:07:13 nagilo Exp $
 
 // id3lib: a software library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -40,6 +40,8 @@
 #endif
 
 #include <string>
+#include <cstring>
+
 
 #if (defined(__GNUC__) && (__GNUC__ >= 3) || (defined(_MSC_VER) && _MSC_VER > 1000))
 // The code for this specialization was taken from gcc's

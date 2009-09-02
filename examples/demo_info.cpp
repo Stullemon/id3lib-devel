@@ -1,4 +1,4 @@
-// $Id: demo_info.cpp,v 1.33 2002/09/13 14:04:11 t1mpy Exp $
+// $Id: demo_info.cpp,v 1.34 2009/09/02 09:07:13 nagilo Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 2002 Thijmen Klok (thijmen@id3lib.org)
@@ -40,7 +40,7 @@ using namespace dami;
 using std::cout;
 using std::endl;
 
-static String VERSION_NUMBER = "$Revision: 1.33 $";
+static String VERSION_NUMBER = "$Revision: 1.34 $";
 
 void PrintUsage(const char *sName)
 {
@@ -316,7 +316,7 @@ void PrintInformation(const ID3_Tag &myTag)
 
 #define DEBUG
 
-int main( unsigned int argc, char * const argv[])
+int main( int argc, char * const argv[])
 {
   ID3D_INIT_DOUT();
 

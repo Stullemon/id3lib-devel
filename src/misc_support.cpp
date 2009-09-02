@@ -1,4 +1,4 @@
-// $Id: misc_support.cpp,v 1.44 2003/02/21 04:20:38 slackorama Exp $
+// $Id: misc_support.cpp,v 1.45 2009/09/02 09:07:13 nagilo Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -973,7 +973,7 @@ char* chartest(char** input)
 //  ID3_Frame* bli = LEAKTESTNEW(ID3_Frame, 0);
   char* tmpchars = "ba";
   iSize = sizeof(char);
-  iSize = sizeof(ID3_Frame);
+  iSize = sizeof(ID3_Frame); // TODO reassigning value to iSize (???)
   char* genre = *input;
   input = &tmpchars;
   return genre;

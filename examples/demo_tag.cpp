@@ -1,4 +1,4 @@
-// $Id: demo_tag.cpp,v 1.16 2002/09/13 14:04:11 t1mpy Exp $
+// $Id: demo_tag.cpp,v 1.17 2009/09/02 09:07:13 nagilo Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 2002 Thijmen Klok (thijmen@id3lib.org)
@@ -40,7 +40,7 @@
 using std::cout;
 using std::endl;
 
-static const char* VERSION_NUMBER = "$Revision: 1.16 $";
+static const char* VERSION_NUMBER = "$Revision: 1.17 $";
 
 void PrintUsage(const char *sName)
 {
@@ -70,7 +70,7 @@ void DisplayTags(ostream &os, luint nTags)
     os << "v2";
 }
 
-int main( unsigned int argc, char * const argv[])
+int main( int argc, char * const argv[])
 {
   int ulFlag = ID3TT_ID3;
   ID3D_INIT_DOUT();

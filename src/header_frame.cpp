@@ -1,4 +1,4 @@
-// $Id: header_frame.cpp,v 1.23 2002/09/13 15:37:23 t1mpy Exp $
+// $Id: header_frame.cpp,v 1.24 2009/09/02 09:07:13 nagilo Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -164,7 +164,7 @@ ID3_Err ID3_FrameHeader::Render(ID3_Writer& writer) const
 
 const char* ID3_FrameHeader::GetTextID() const
 {
-  char *textID = "";
+  char *textID = NULL;
   if (_info && _frame_def)
   {
     if (_info->frame_bytes_id == strlen(_frame_def->sShortTextID))
