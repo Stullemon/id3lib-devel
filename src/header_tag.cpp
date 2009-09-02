@@ -1,4 +1,4 @@
-// $Id: header_tag.cpp,v 1.26 2002/09/19 09:54:39 t1mpy Exp $
+// $Id: header_tag.cpp,v 1.27 2009/09/02 19:41:26 nagilo Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -54,7 +54,7 @@ size_t ID3_TagHeader::Size() const
 {
   size_t bytesUsed = ID3_TagHeader::SIZE;
 
-  if (_info->is_extended)
+  if (_info && _info->is_extended)
   {
     bytesUsed += _info->extended_bytes;
   }
