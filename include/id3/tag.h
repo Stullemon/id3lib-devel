@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: tag.h,v 1.63 2002/10/04 09:56:03 t1mpy Exp $
+// $Id: tag.h,v 1.64 2009/09/04 14:21:18 nagilo Exp $
 
 // id3lib: a software library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -56,12 +56,14 @@ public:
   {
   public:
     virtual ID3_Frame*       GetNext()       = 0;
+    virtual ~Iterator() {};
   };
 
   class ConstIterator
   {
   public:
     virtual const ID3_Frame* GetNext()       = 0;
+    virtual ~ConstIterator() {};
   };
 
 public:

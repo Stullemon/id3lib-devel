@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: id3lib_frame.h,v 1.2 2002/09/13 14:26:47 t1mpy Exp $
+// $Id: id3lib_frame.h,v 1.3 2009/09/04 14:21:18 nagilo Exp $
 
 // id3lib: a C++ library for creating and manipulating id3v1/v2 tags
 // Copyright 1999, 2000  Scott Thomas Haug
@@ -55,12 +55,14 @@ public:
   {
   public:
     virtual ID3_Field*       GetNext()       = 0;
+    virtual ~Iterator() {};
   };
 
   class ConstIterator
   {
   public:
     virtual const ID3_Field* GetNext()       = 0;
+    virtual ~ConstIterator() {};
   };
 
 public:
