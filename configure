@@ -259,7 +259,7 @@ $as_unset CDPATH || test "${CDPATH+set}" != set || { CDPATH=$PATH_SEPARATOR; exp
 
 ID3LIB_MAJOR_VERSION=3
 ID3LIB_MINOR_VERSION=9
-ID3LIB_PATCH_VERSION=0
+ID3LIB_PATCH_VERSION=2
 ID3LIB_ADDED_VERSION=
 ID3LIB_VERSION=$ID3LIB_MAJOR_VERSION.$ID3LIB_MINOR_VERSION.$ID3LIB_PATCH_VERSION$ID3LIB_ADDED_VERSION
 
@@ -9792,7 +9792,7 @@ rm -f conftest.$ac_objext conftest.$ac_ext
     echo "$as_me:$LINENO: result: const char **" >&5
 echo "${ECHO_T}const char **" >&6
     cat >>confdefs.h <<\_ACEOF
-#define ID3LIB_ICONV_OLDSTYLE 1
+#define ID3LIB_ICONV_CONSTSOURCE 1
 _ACEOF
 
     #we'll check out the need of
@@ -10632,7 +10632,7 @@ _ACEOF
     ID3_ICONV_FORMAT_UTF8=no
     ID3_ICONV_FORMAT_UTF16=no
     ID3_ICONV_FORMAT_UTF16BE=no
-    ID3_ICONV_FORMAT_ASCII=no
+    ID3_ICONV_FORMAT_ISO_8859_1=no
 
 
   if eval "test \"x\$ID3_ICONV_FORMAT_UTF8\" = \"xno\""; then
@@ -11081,7 +11081,7 @@ fi
 #    ID3_CLEAR_ICONV_FORMAT(ID3_ICONV_FORMAT_UTF16)
 
 
-  if eval "test \"x\$ID3_ICONV_FORMAT_ASCII\" = \"xno\""; then
+  if eval "test \"x\$ID3_ICONV_FORMAT_ISO_8859_1\" = \"xno\""; then
     echo "$as_me:$LINENO: checking whether iconv supports ISO-8859-1" >&5
 echo $ECHO_N "checking whether iconv supports ISO-8859-1... $ECHO_C" >&6
     if test "$cross_compiling" = yes; then
@@ -11105,11 +11105,11 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-   eval ID3_ICONV_FORMAT_ASCII=yes
+   eval ID3_ICONV_FORMAT_ISO_8859_1=yes
         echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
         cat >>confdefs.h <<_ACEOF
-#define ID3_ICONV_FORMAT_ASCII "ISO-8859-1"
+#define ID3_ICONV_FORMAT_ISO_8859_1 "ISO-8859-1"
 _ACEOF
 
 else
@@ -11125,7 +11125,7 @@ fi
   fi
 
 
-  if eval "test \"x\$ID3_ICONV_FORMAT_ASCII\" = \"xno\""; then
+  if eval "test \"x\$ID3_ICONV_FORMAT_ISO_8859_1\" = \"xno\""; then
     echo "$as_me:$LINENO: checking whether iconv supports ASCII" >&5
 echo $ECHO_N "checking whether iconv supports ASCII... $ECHO_C" >&6
     if test "$cross_compiling" = yes; then
@@ -11149,11 +11149,11 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-   eval ID3_ICONV_FORMAT_ASCII=yes
+   eval ID3_ICONV_FORMAT_ISO_8859_1=yes
         echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
         cat >>confdefs.h <<_ACEOF
-#define ID3_ICONV_FORMAT_ASCII "ASCII"
+#define ID3_ICONV_FORMAT_ISO_8859_1 "ASCII"
 _ACEOF
 
 else
@@ -11169,7 +11169,7 @@ fi
   fi
 
 
-  if eval "test \"x\$ID3_ICONV_FORMAT_ASCII\" = \"xno\""; then
+  if eval "test \"x\$ID3_ICONV_FORMAT_ISO_8859_1\" = \"xno\""; then
     echo "$as_me:$LINENO: checking whether iconv supports US-ASCII" >&5
 echo $ECHO_N "checking whether iconv supports US-ASCII... $ECHO_C" >&6
     if test "$cross_compiling" = yes; then
@@ -11193,11 +11193,11 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-   eval ID3_ICONV_FORMAT_ASCII=yes
+   eval ID3_ICONV_FORMAT_ISO_8859_1=yes
         echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
         cat >>confdefs.h <<_ACEOF
-#define ID3_ICONV_FORMAT_ASCII "US-ASCII"
+#define ID3_ICONV_FORMAT_ISO_8859_1 "US-ASCII"
 _ACEOF
 
 else
@@ -11213,7 +11213,7 @@ fi
   fi
 
 
-  if eval "test \"x\$ID3_ICONV_FORMAT_ASCII\" = \"xno\""; then
+  if eval "test \"x\$ID3_ICONV_FORMAT_ISO_8859_1\" = \"xno\""; then
     echo "$as_me:$LINENO: checking whether iconv supports US" >&5
 echo $ECHO_N "checking whether iconv supports US... $ECHO_C" >&6
     if test "$cross_compiling" = yes; then
@@ -11237,11 +11237,11 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-   eval ID3_ICONV_FORMAT_ASCII=yes
+   eval ID3_ICONV_FORMAT_ISO_8859_1=yes
         echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
         cat >>confdefs.h <<_ACEOF
-#define ID3_ICONV_FORMAT_ASCII "US"
+#define ID3_ICONV_FORMAT_ISO_8859_1 "US"
 _ACEOF
 
 else
@@ -11256,7 +11256,7 @@ rm -f core core.* *.core conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
 fi
   fi
 
-#    ID3_CLEAR_ICONV_FORMAT(ID3_ICONV_FORMAT_ASCII)
+#    ID3_CLEAR_ICONV_FORMAT(ID3_ICONV_FORMAT_ISO_8859_1)
   fi
 
 

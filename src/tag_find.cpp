@@ -135,7 +135,7 @@ ID3_Frame *ID3_TagImpl::Find(ID3_FrameID id, ID3_FieldID fldID, String data) con
           ID3D_NOTICE( "Find: didn't have the right field" );
         }
 
-        String text(fld->GetRawText(), fld->Size());
+        String text( NULL == fld->GetRawText() ? "" : fld->GetRawText() , fld->Size()); //PHF
         ID3D_NOTICE( "Find: text = " << text.c_str() );
 
         if (text == data)

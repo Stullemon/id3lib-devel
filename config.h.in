@@ -32,8 +32,8 @@
 #undef ID3_ICONV_FORMAT_UTF16BE
 #undef ID3_ICONV_FORMAT_UTF16
 #undef ID3_ICONV_FORMAT_UTF8
-#undef ID3_ICONV_FORMAT_ASCII
-#undef ID3LIB_ICONV_OLDSTYLE
+#undef ID3_ICONV_FORMAT_ISO_8859_1
+#undef ID3LIB_ICONV_CONSTSOURCE
 #undef ID3LIB_ICONV_CAST_OK
 
 /* config.h defines these preprocesser symbols to be used by id3lib for

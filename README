@@ -82,6 +82,24 @@ If you send it to the mailing list, please include the following:
 Patches
 =======
 
+Please follow these guidelines:
+no tabs:
+To promote portability between compiler gui's there are no tabs
+in the code, all indents are (should be) two spaces.
+
+cr/lf: all sources (.cpp .h .c) have only a linefeed (\n)
+
+all other files are either binary or, in case of visual studio
+project files, have crlf
+
+Use the sourceforge compile farm to test things, It will speed
+things greatly when you can say (e.g.) "Tested on MacOs 10.3 and worked"
+as that is a step less in the process of source committing
+
+A lot of our users are Windows users, patches should work for
+all platforms, if you don't have either windows, visual studio
+or borland c, let us know, and we'll work something out.
+
 Patches can be submitted to the patch manager at the id3lib project page, as
 mentioned above.  Please follow the instructions there.  So as not to annoy
 uniterested parties with large email messages, it is preferable that you not

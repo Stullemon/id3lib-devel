@@ -204,6 +204,45 @@ size_t RenderV1ToFile(ID3_TagImpl& tag, fstream& file)
   return ID3_V1_LEN;
 }
 
+#if defined(HAVE_UNISTD_H)
+static String ResolveSymlink(const String& filename, int depth = 0)
+{
+  int result;
+  String::size_type pos;
+  char tmpBuf[ID3_PATH_LENGTH];
+  String abs;
+  if (depth > 32)
+  {
+    return filename;
+  }
+  result = readlink(filename.c_str(), tmpBuf, ID3_PATH_LENGTH-1);
+  if (result > 0)
+  {
+    tmpBuf[result] = '\0';
+    if (tmpBuf[0] != '/')
+    { // relative path, create an absolute path
+      pos = filename.rfind('/');
+      if (pos == String::npos)
+      {
+      	// give up
+        return filename;
+      }
+      abs = filename.substr(0, pos+1) + tmpBuf;
+      return ResolveSymlink(abs, depth+1);
+    }
+    else
+    {
+      return ResolveSymlink(tmpBuf, depth+1);
+    }
+  }
+  else
+  {
+    // readlink error, most likely not a symbolic link
+    return filename;
+  }
+}
+#endif //defined(HAVE_UNISTD_H)
+
 size_t RenderV2ToFile(const ID3_TagImpl& tag, fstream& file)
 {
   ID3_Err err = ID3E_NoError;
@@ -304,6 +343,8 @@ size_t RenderV2ToFile(const ID3_TagImpl& tag, fstream& file)
       tmpOut.write(tmpBuffer, nBytes);
     }
 
+    close(fd); //closes the file
+
 #endif ////((defined(__GNUC__) && __GNUC__ >= 3  ) || !defined(HAVE_MKSTEMP))
 
     tmpOut.close();
@@ -316,8 +357,16 @@ size_t RenderV2ToFile(const ID3_TagImpl& tag, fstream& file)
     if(stat(filename.c_str(), &fileStat) == 0)
     {
 #endif //defined(HAVE_SYS_STAT_H)
+#if defined(HAVE_UNISTD_H)
+      // if filename is a symbolic link, replace the file the link is
+      // ultimately pointing to
+      String realname = ResolveSymlink(filename);
+      remove(realname.c_str());
+      rename(sTempFile, realname.c_str());
+#else //defined(HAVE_UNISTD_H)
       remove(filename.c_str());
       rename(sTempFile, filename.c_str());
+#endif //defined(HAVE_UNISTD_H)
 #if defined(HAVE_SYS_STAT_H)
       chmod(filename.c_str(), fileStat.st_mode);
     }
@@ -435,9 +484,8 @@ flags_t ID3_TagImpl::Strip(flags_t ulTagFlag)
     // moved in the actual file.
     // The nBytesCopied variable keeps track of how many actual bytes were
     // copied (or moved) so far.
-    size_t
-      nBytesRemaining = nBytesToCopy,
-      nBytesCopied = 0;
+    size_t nBytesRemaining = nBytesToCopy,
+    nBytesCopied = 0;
     while (!file.eof())
     {
 #if (defined(__GNUC__) && __GNUC__ == 2)

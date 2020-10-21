@@ -40,7 +40,7 @@ using namespace dami;
 size_t ID3_FieldImpl::Set(const uchar* data, size_t len)
 {
   size_t size = 0;
-  if (this->GetType() == ID3FTY_BINARY)
+  if ((this->GetType() == ID3FTY_BINARY) && data && len)
   {
     BString str(data, len);
     size = min(len, this->SetBinary(str));

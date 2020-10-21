@@ -46,7 +46,7 @@ using namespace dami;
 size_t ID3_FieldImpl::Set(const char* data)
 {
   size_t len = 0;
-  if (this->GetType() == ID3FTY_TEXTSTRING)
+  if ((this->GetType() == ID3FTY_TEXTSTRING) && data)
   {
     String str(data);
     len = this->SetText_i(str);

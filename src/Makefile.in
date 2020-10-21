@@ -180,6 +180,7 @@ lib_LTLIBRARIES = libid3.la
 libid3_la_SOURCES = $(id3lib_sources)
 
 @ID3_NEEDZLIB_TRUE@LDADD = $(top_builddir)/zlib/src/libz.la
+@ID3_NEEDZLIB_FALSE@LDADD = libz.la
 
 libid3_la_LDFLAGS = \
   -version-info $(LT_VERSION) \

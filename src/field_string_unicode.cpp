@@ -51,7 +51,7 @@ size_t ID3_FieldImpl::Set(const unicode_t* data)
 {
   size_t size = 0;
   if (this->GetType() == ID3FTY_TEXTSTRING &&
-      ID3TE_IS_DOUBLE_BYTE_ENC(this->GetEncoding()))
+      ID3TE_IS_DOUBLE_BYTE_ENC(this->GetEncoding()) && data)
   {
     String text((const char*) data, ucslen(data) * 2);
     size = this->SetText_i(text);

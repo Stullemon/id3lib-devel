@@ -27,6 +27,35 @@
 
 #include "mp3_header.h"
 
+#define FRAMES_FLAG     0x0001
+#define BYTES_FLAG      0x0002
+#define TOC_FLAG        0x0004
+#define SCALE_FLAG      0x0008
+
+static int ExtractI4(unsigned char *buf)
+{
+  int x;
+
+#ifdef WORDS_BIGENDIAN
+
+  return * (int*) buf;
+
+#else
+  // big endian extract
+
+  x = buf[0];
+  x <<= 8;
+  x |= buf[1];
+  x <<= 8;
+  x |= buf[2];
+  x <<= 8;
+  x |= buf[3];
+
+  return x;
+
+#endif
+}
+
 uint32 fto_nearest_i(float f)
 {
   uint32 i;
@@ -224,6 +253,7 @@ bool Mp3Info::Parse(ID3_Reader& reader, size_t mp3size)
   _mp3_header_output->framesize = 0;
   _mp3_header_output->frames = 0;
   _mp3_header_output->time = 0;
+  _mp3_header_output->vbr_bitrate = 0;
 
   reader.readChars(buf, HEADERSIZE);
   buf[HEADERSIZE]='\0';
@@ -365,10 +395,29 @@ bool Mp3Info::Parse(ID3_Reader& reader, size_t mp3size)
 //http://www.mp3-tech.org/programmer/frame_header.html
   if (_mp3_header_output->bitrate != MP3BITRATE_NONE && _mp3_header_output->frequency > 0)
   {
-    if (_mp3_header_output->layer == MPEGLAYER_I)
-      _mp3_header_output->framesize = fto_nearest_i((float)((48 * (float)_mp3_header_output->bitrate) / _mp3_header_output->frequency)) + (_tmpheader->padding_bit ? 4 : 0);
-    else
-      _mp3_header_output->framesize = fto_nearest_i((float)((144 * (float)_mp3_header_output->bitrate) / _mp3_header_output->frequency)) + (_tmpheader->padding_bit ? 1 : 0);
+
+    switch(_mp3_header_output->layer)
+    {
+      case MPEGLAYER_I: // Layer 1
+        _mp3_header_output->framesize = 4 * (12 * _mp3_header_output->bitrate / _mp3_header_output->frequency + (_tmpheader->padding_bit ? 1 : 0));
+        break;
+      case MPEGLAYER_II: // Layer 2
+        _mp3_header_output->framesize = 144 * _mp3_header_output->bitrate / _mp3_header_output->frequency + (_tmpheader->padding_bit ? 1 : 0);
+        break;
+      case MPEGLAYER_III: // Layer 3
+        if(_mp3_header_output->version == MPEGVERSION_2_5)
+          _mp3_header_output->framesize = 144 * _mp3_header_output->bitrate / _mp3_header_output->frequency + (_tmpheader->padding_bit ? 1 : 0); //Mpeg1
+        else
+          _mp3_header_output->framesize =  72000 * _mp3_header_output->bitrate / _mp3_header_output->frequency + (_tmpheader->padding_bit ? 1 : 0); //Mpeg2 + Mpeg2.5
+        break;
+      default:
+        _mp3_header_output->framesize = 0; //unable to determine
+        break;
+    }
+//    if (_mp3_header_output->layer == MPEGLAYER_I)
+//      _mp3_header_output->framesize = fto_nearest_i((float)((48 * (float)_mp3_header_output->bitrate) / _mp3_header_output->frequency)) + (_tmpheader->padding_bit ? 4 : 0);
+//    else
+//      _mp3_header_output->framesize = fto_nearest_i((float)((144 * (float)_mp3_header_output->bitrate) / _mp3_header_output->frequency)) + (_tmpheader->padding_bit ? 1 : 0);
   }
   else
     _mp3_header_output->framesize = 0; //unable to determine
@@ -380,6 +429,9 @@ bool Mp3Info::Parse(ID3_Reader& reader, size_t mp3size)
     sideinfo_len = (_mp3_header_output->channelmode == MP3CHANNELMODE_SINGLE_CHANNEL) ? 4 + 17 : 4 + 32;
   else                /* MPEG 2 */
     sideinfo_len = (_mp3_header_output->channelmode == MP3CHANNELMODE_SINGLE_CHANNEL) ? 4 + 9 : 4 + 17;
+
+  int vbr_header_offest = beg + sideinfo_len;
+  int vbr_frames = 0;
 
   sideinfo_len += 2; // add two for the crc itself
 
@@ -412,11 +464,102 @@ bool Mp3Info::Parse(ID3_Reader& reader, size_t mp3size)
     if (crcstored == crc16)
       _mp3_header_output->crc = MP3CRC_OK;
   }
+
+  // read xing/vbr header if present
+  // derived from code in vbrheadersdk.zip
+  // from http://www.xingtech.com/developer/mp3/
+
+  const size_t VBR_HEADER_MIN_SIZE = 8;     // "xing" + flags are fixed
+  const size_t VBR_HEADER_MAX_SIZE = 120;   // frames, bytes, toc and scale are optional
+
+  if (mp3size >= vbr_header_offest + VBR_HEADER_MIN_SIZE)
+  {
+    char vbrheaderdata[VBR_HEADER_MAX_SIZE+1]; //+1 to hold the 0 char
+    unsigned char *pvbrdata = (unsigned char *)vbrheaderdata;
+    int vbr_filesize = 0;
+    int vbr_scale = 0;
+    int vbr_flags = 0;
+
+    // get fixed part of vbr header
+    // and check if valid
+
+    beg = vbr_header_offest;
+    reader.setCur(beg);
+    reader.readChars(vbrheaderdata, VBR_HEADER_MIN_SIZE);
+    vbrheaderdata[VBR_HEADER_MIN_SIZE] = '\0';
+
+    if (pvbrdata[0] == 'X' &&
+        pvbrdata[1] == 'i' &&
+        pvbrdata[2] == 'n' &&
+        pvbrdata[3] == 'g')
+    {
+      // get vbr flags
+      pvbrdata += 4;
+      vbr_flags = ExtractI4(pvbrdata);
+      pvbrdata += 4;
+
+      //  read entire vbr header
+      int vbr_header_size = VBR_HEADER_MIN_SIZE
+                           + ((vbr_flags & FRAMES_FLAG)? 4:0)
+                           + ((vbr_flags & BYTES_FLAG)? 4:0)
+                           + ((vbr_flags & TOC_FLAG)? 100:0)
+                           + ((vbr_flags & SCALE_FLAG)? 4:0);
+
+      if (mp3size >= vbr_header_offest + vbr_header_size)
+      {
+        reader.readChars(&vbrheaderdata[VBR_HEADER_MIN_SIZE], vbr_header_size - VBR_HEADER_MIN_SIZE);
+        vbrheaderdata[vbr_header_size] = '\0';
+
+        // get frames, bytes, toc and scale
+
+        if (vbr_flags & FRAMES_FLAG)
+        {
+          vbr_frames = ExtractI4(pvbrdata);
+          pvbrdata +=4;
+        }
+
+        if (vbr_flags & BYTES_FLAG)
+        {
+          vbr_filesize = ExtractI4(pvbrdata);
+          pvbrdata +=4;
+        }
+
+        if (vbr_flags & TOC_FLAG)
+        {
+          // seek offsets
+          // we are not using
+          // for(i=0;i<100;i++) seek_offsets[i] = pvbrdata[i];
+
+          pvbrdata +=100;
+        }
+
+        if (vbr_flags & SCALE_FLAG)
+        {
+          vbr_scale = ExtractI4(pvbrdata);
+          pvbrdata +=4;
+        }
+
+        if (vbr_frames > 0)
+        {
+          _mp3_header_output->vbr_bitrate = (((vbr_filesize!=0) ? vbr_filesize : mp3size) / vbr_frames) * _mp3_header_output->frequency / 144;
+          _mp3_header_output->vbr_bitrate -= _mp3_header_output->vbr_bitrate%1000;   // round the bitrate:
+        }
+      }
+    }
+  }
+
   if (_mp3_header_output->framesize > 0 && mp3size >= _mp3_header_output->framesize) // this means bitrate is not none too
   {
-    _mp3_header_output->frames = fto_nearest_i((float)mp3size / _mp3_header_output->framesize);
+    if (vbr_frames == 0)
+      _mp3_header_output->frames = fto_nearest_i((float)mp3size / _mp3_header_output->framesize);
+    else
+      _mp3_header_output->frames = vbr_frames;
+
     // bitrate becomes byterate (per second) if divided by 8
-    _mp3_header_output->time = fto_nearest_i( (float)mp3size / (_mp3_header_output->bitrate / 8) );
+    if (_mp3_header_output->vbr_bitrate == 0)
+      _mp3_header_output->time = fto_nearest_i( (float)mp3size / (_mp3_header_output->bitrate / 8) );
+    else
+      _mp3_header_output->time = fto_nearest_i( (float)mp3size / (_mp3_header_output->vbr_bitrate / 8) );
   }
   else
   {

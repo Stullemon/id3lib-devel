@@ -74,6 +74,8 @@ libid3_la_SOURCES = $(id3lib_sources)
 
 if ID3_NEEDZLIB
 LDADD        = $(top_builddir)/zlib/src/libz.la
+else
+LDADD        = libz.la
 endif
 
 libid3_la_LDFLAGS = \

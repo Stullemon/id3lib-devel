@@ -98,6 +98,7 @@ namespace dami
 
   size_t ID3_C_EXPORT ucslen(const unicode_t *unicode);
   String ID3_C_EXPORT convert(String data, ID3_TextEnc, ID3_TextEnc);
+  ID3_Err ID3_C_EXPORT codepageconvert( const String *source, String *target, ID3_TextEnc sourceEnc, ID3_TextEnc targetEnc);
 
   // file utils
   size_t ID3_C_EXPORT getFileSize(fstream&);

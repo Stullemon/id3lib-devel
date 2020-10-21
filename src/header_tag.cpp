@@ -225,7 +225,10 @@ void ID3_TagHeader::ParseExtended(ID3_Reader& reader)
   // a bit unorthodox, but since we are not using any of the extended header, but were merely
   // parsing it to get the cursor right, we delete it. Be Gone !
   _flags.set(HEADER_FLAG_EXTENDED, false);
-  _data_size -= _info->extended_bytes;
-  _info->extended_bytes = 0;
+  if (_info)
+  {
+    _data_size -= _info->extended_bytes;
+    _info->extended_bytes = 0;
+  }//else there is a tag with a higher or lower version than supported
 }
 

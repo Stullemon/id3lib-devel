@@ -745,6 +745,7 @@ ID3_STRUCT(Mp3_Headerinfo)
   Mp3_ModeExt modeext;
   Mp3_Emphasis emphasis;
   Mp3_Crc crc;
+  uint32 vbr_bitrate;           // avg bitrate from xing header
   uint32 frequency;             // samplerate
   uint32 framesize;
   uint32 frames;                // nr of frames

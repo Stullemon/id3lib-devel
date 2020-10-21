@@ -791,7 +791,16 @@ size_t ID3_Tag::GetFileSize() const
 
 const char* ID3_Tag::GetFileName() const
 {
-  return _impl->GetFileName().c_str();
+  //fix because GetFileName need to return a pointer which keeps to be valid
+  String fn = _impl->GetFileName();
+  if (fn.size())
+  {
+    memset((char *)_tmp_filename, 0, ID3_PATH_LENGTH);
+    memmove((char *)_tmp_filename, fn.c_str(), fn.size());
+    return _tmp_filename; //_impl->GetFileName().c_str();
+  }
+  else
+    return NULL;
 }
 
 /// Finds frame with given frame id

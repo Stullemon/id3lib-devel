@@ -30,6 +30,10 @@
 #include "id3/id3lib_streams.h"
 #include "id3/tag.h"
 
+using std::cout;
+using std::endl;
+using std::cerr;
+
 
 void MakeDummyTag(void)
 {
