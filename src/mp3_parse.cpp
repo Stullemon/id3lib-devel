@@ -393,16 +393,16 @@ bool Mp3Info::Parse(ID3_Reader& reader, size_t mp3size)
     switch(_mp3_header_output->layer)
     {
       case MPEGLAYER_I: // Layer 1
-        _mp3_header_output->framesize = 4.0f * (12.0f * _mp3_header_output->bitrate / _mp3_header_output->frequency + (_tmpheader->padding_bit ? 1 : 0));
+        _mp3_header_output->framesize = fto_nearest_i(4.0f * (12.0f * _mp3_header_output->bitrate / _mp3_header_output->frequency + (_tmpheader->padding_bit ? 1 : 0)));
         break;
       case MPEGLAYER_II: // Layer 2
-        _mp3_header_output->framesize = 144.0f * _mp3_header_output->bitrate / _mp3_header_output->frequency + (_tmpheader->padding_bit ? 1 : 0);
+        _mp3_header_output->framesize = fto_nearest_i(144.0f * _mp3_header_output->bitrate / _mp3_header_output->frequency + (_tmpheader->padding_bit ? 1 : 0));
         break;
       case MPEGLAYER_III: // Layer 3
         if(_mp3_header_output->version == MPEGVERSION_2_5)
-          _mp3_header_output->framesize = 144.0f * _mp3_header_output->bitrate / _mp3_header_output->frequency + (_tmpheader->padding_bit ? 1 : 0); //Mpeg1
+          _mp3_header_output->framesize = fto_nearest_i(144.0f * _mp3_header_output->bitrate / _mp3_header_output->frequency + (_tmpheader->padding_bit ? 1 : 0)); //Mpeg1
         else
-          _mp3_header_output->framesize =  72000.0f * _mp3_header_output->bitrate / _mp3_header_output->frequency + (_tmpheader->padding_bit ? 1 : 0); //Mpeg2 + Mpeg2.5
+          _mp3_header_output->framesize = fto_nearest_i(72000.0f * _mp3_header_output->bitrate / _mp3_header_output->frequency + (_tmpheader->padding_bit ? 1 : 0)); //Mpeg2 + Mpeg2.5
         break;
       default:
         _mp3_header_output->framesize = 0; //unable to determine
@@ -491,7 +491,7 @@ bool Mp3Info::Parse(ID3_Reader& reader, size_t mp3size)
       pvbrdata += 4;
 
       //  read entire vbr header
-      int vbr_header_size = VBR_HEADER_MIN_SIZE
+      size_t vbr_header_size = VBR_HEADER_MIN_SIZE
                            + ((vbr_flags & FRAMES_FLAG)? 4:0)
                            + ((vbr_flags & BYTES_FLAG)? 4:0)
                            + ((vbr_flags & TOC_FLAG)? 100:0)
